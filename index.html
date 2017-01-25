@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <link href="favicon.ico" rel="shortcut icon">
+    <title>Demo</title>
+    <script src="key.min.js"></script>
+  </head>
+  <body>
+    <p><input type="text"></p>
+    <p></p>
+    <script>
+    var input = document.querySelectorAll('input'),
+        p = document.querySelectorAll('p');K.set();
+    input[0].addEventListener("keydown", function(e) {
+        this.value = "";
+        p[1].innerHTML = '<span style="display:block;"><mark style="white-space:pre;">' + e.K.key() + '</mark></span>' + p[1].innerHTML;
+    }, false);
+    </script>
+  </body>
+</html>
