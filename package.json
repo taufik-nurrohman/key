@@ -1,0 +1,26 @@
+{
+  "name": "tovic--k",
+  "version": "1.0.0",
+  "description": "Easy keyboard events.",
+  "main": "key.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tovic/key.git"
+  },
+  "keywords": [
+    "key",
+    "board",
+    "keyboard",
+    "event",
+    "custom"
+  ],
+  "author": "Taufik Nurrohman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tovic/key/issues"
+  },
+  "homepage": "https://tovic.github.com/key"
+}
