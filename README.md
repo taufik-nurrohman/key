@@ -15,14 +15,15 @@ Usage
 
 ~~~ .js
 input.addEventListener("keydown", function(e) {
-    console.log(K.set(e).key());
+    var $ = (new K(e)).set();
+    console.log($.key());
 }, false);
 ~~~
 
 ### Apply to All Keyboard Events
 
 ~~~ .js
-K.set(); // apply to all keyboard events…
+(new K()).set(); // apply to all keyboard events…
 
 input.addEventListener("keydown", function(e) {
     console.log(e.K.key());
@@ -37,13 +38,11 @@ textarea.addEventListener("keydown", function(e) {
 
  - `K.set()`
  - `K.reset()`
- - `K.keys`
- - `K.keys_a`
- - `K.id`
  - `K.version`
+ - `K.alias`
 
 ~~~ .js
-K.set();
+(new K()).set();
 
 input.addEventListener("keydown", function(e) {
 
