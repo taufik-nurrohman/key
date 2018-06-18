@@ -6,7 +6,7 @@
             return '-' + $.toLowerCase();
         }).replace(/^-*|-*$/g, "");
     }
-    var K = win[NS] = function(event, id) {
+    var K = function(event, id) {
         var $ = this,
             i, j, k, l;
         $.id = id || NS;
@@ -98,4 +98,5 @@
         'plus': '+',
         'minus': '-'
     };
+    win[NS] = K;
 })(window, 'K');
