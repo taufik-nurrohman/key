@@ -39,9 +39,9 @@ block script
     | source.addEventListener('keydown', e => {
     |     map.push(e.key);
     |     let command = map.test();
-    |     test.style.color = command ? '#090' : '#900';
-    |     test.innerHTML = '<b>' + map + '</b> (command' + (command ? "" : ' does not') + ' exist)';
     |     let value = map.fire(command);
+    |     test.style.color = null !== value ? '#090' : '#900';
+    |     test.innerHTML = '<b>' + map + '</b> (command' + (null !== value ? "" : ' does not') + ' exist)';
     |     if (false === value) {
     |         e.preventDefault();
     |     }
@@ -110,7 +110,7 @@ block content
   p Do you like this project? Please support my #[a(href='https://github.com/mecha-cms') Mecha CMS] project too. Thank you!
   header
     h1= title
-    p Micro JavaScript hotkey/keymap system.
+    p Micro JavaScript #[em hotkey]/#[em keymap] system.
     hr
   main
     p
@@ -200,7 +200,7 @@ block content
       |     // Your `insertLink` function goes here&hellip;
       |     // Return `void` will be normalized into `true` by `map.fire()` method.
       | };
-    p Example context usage, using #[a(href='../text-editor') @taufik-nurrohman/text-editor].
+    p Example context usage, using #[a(href='../text-editor') @taufik-nurrohman/text-editor]:
     pre: code
       | import K from '@taufik-nurrohman/key';
       | import TE from '@taufik-nurrohman/text-editor';

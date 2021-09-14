@@ -5,7 +5,7 @@
     <meta content="#000" name="theme-color">
     <meta content="width=device-width" name="viewport">
     <meta content="Micro JavaScript hotkey/keymap system." name="description">
-    <title>Key 2.0.0</title>
+    <title>Key 2.0.1</title>
     <style>
       * {
         box-sizing: border-box;
@@ -69,8 +69,8 @@
   <body>
     <p>Do you like this project? Please support my <a href="https://github.com/mecha-cms">Mecha CMS</a> project too. Thank you!</p>
     <header>
-      <h1>Key 2.0.0</h1>
-      <p>Micro JavaScript hotkey/keymap system.</p>
+      <h1>Key 2.0.1</h1>
+      <p>Micro JavaScript <em>hotkey</em>/<em>keymap</em> system.</p>
       <hr>
     </header>
     <main>
@@ -159,7 +159,7 @@ map.commands.insertLink = function(href = 'http://') {
     // Your `insertLink` function goes here&hellip;
     // Return `void` will be normalized into `true` by `map.fire()` method.
 };</code></pre>
-      <p>Example context usage, using <a href="../text-editor">@taufik-nurrohman/text-editor</a>.</p>
+      <p>Example context usage, using <a href="../text-editor">@taufik-nurrohman/text-editor</a>:</p>
       <pre><code>import K from '@taufik-nurrohman/key';
 import TE from '@taufik-nurrohman/text-editor';
 
@@ -264,9 +264,9 @@ source.addEventListener('keyup', e => {
       source.addEventListener('keydown', e => {
           map.push(e.key);
           let command = map.test();
-          test.style.color = command ? '#090' : '#900';
-          test.innerHTML = '<b>' + map + '</b> (command' + (command ? "" : ' does not') + ' exist)';
           let value = map.fire(command);
+          test.style.color = null !== value ? '#090' : '#900';
+          test.innerHTML = '<b>' + map + '</b> (command' + (null !== value ? "" : ' does not') + ' exist)';
           if (false === value) {
               e.preventDefault();
           }

@@ -23,7 +23,7 @@ function K(context = {}) {
                 exist = true;
             }
         }
-        return null === value && exist ? true : value;
+        return exist ? (isSet(value) ? value : true) : null;
     };
 
     $.keys = {};
@@ -52,6 +52,6 @@ function K(context = {}) {
 
 }
 
-K.version = '2.0.0';
+K.version = '2.0.1';
 
 export default K;

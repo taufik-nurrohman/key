@@ -23,7 +23,7 @@ function K(context = {}) {
                 exist = true;
             }
         }
-        return null === value && exist ? true : value;
+        return exist ? (isSet(value) ? value : true) : null;
     };
 
     $.keys = {};
