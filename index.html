@@ -2,22 +2,279 @@
 <html dir="ltr">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <link href="favicon.ico" rel="shortcut icon">
-    <title>Demo</title>
-    <script src="key.min.js"></script>
+    <meta content="#000" name="theme-color">
+    <meta content="width=device-width" name="viewport">
+    <meta content="Micro JavaScript hotkey/keymap system." name="description">
+    <title>Key 2.0.0</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      :root {
+        background: #fff;
+        border-top: 4px solid;
+        color: #000;
+        font: normal normal 16px/1.25 serif;
+      }
+      a {
+        color: #009;
+        text-decoration: none;
+      }
+      a,
+      code {
+        word-wrap: break-word;
+      }
+      code {
+        font-family: monospace;
+        font-size: 80%;
+      }
+      footer,
+      header,
+      main,
+      nav {
+        margin: 0 auto;
+        max-width: 700px;
+      }
+      hr {
+        border: 0;
+        border-top: 1px dashed;
+        color: inherit;
+        height: 0;
+      }
+      pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+      pre code {
+        background: #eee;
+        display: block;
+        padding: 1em;
+      }
+      table {
+        width: 100%;
+      }
+      td,
+      th {
+        text-align: left;
+        vertical-align: top;
+      }
+      body > p:first-child {
+        background: #ffa;
+        border: 1px dashed;
+        margin-top: 0;
+        padding: .75em 1em;
+      }
+    </style>
   </head>
   <body>
-    <p><input type="text"></p>
-    <p></p>
+    <p>Do you like this project? Please support my <a href="https://github.com/mecha-cms">Mecha CMS</a> project too. Thank you!</p>
+    <header>
+      <h1>Key 2.0.0</h1>
+      <p>Micro JavaScript hotkey/keymap system.</p>
+      <hr>
+    </header>
+    <main>
+      <p><input id="in" type="text"></p>
+      <p><span id="out">Type something&hellip;</span></p>
+      <h2>Features</h2>
+      <ul>
+        <li>Light-weight, no dependencies.</li>
+        <li>Simple <abbr title="Application Programming Interface">API</abbr>. Easy to master.</li>
+      </ul>
+      <h2>Usage</h2>
+      <h3>Browser</h3>
+      <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html dir="ltr"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;p&gt;
+      &lt;textarea&gt;&lt;/textarea&gt;
+    &lt;/p&gt;
+    &lt;script src="<a href="index.min.js" target="_blank">./index.min.js</a>"&gt;&lt;/script&gt;
+    &lt;script&gt;
+      const map = new K;
+      const source = document.querySelector('textarea');
+      source.addEventListener('blur', e =&gt; {
+          map.pull(); // Reset all!
+      });
+      source.addEventListener('keydown', e =&gt; {
+          map.push(e.key);
+          console.log(map.toString());
+      });
+      source.addEventListener('keyup', e =&gt; {
+          map.pull(e.key);
+      });
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      <h3>Node.js</h3>
+      <p>Functions and methods in this application are mostly native JavaScript and are intended for use by the browser. Node.js doesn&rsquo;t know about the DOM, so this kind of practice will probably be used more often to build new browser packages than to be used directly in the Node.js server.</p>
+      <h4>CommonJS</h4>
+      <pre><code>const K = require('@taufik-nurrohman/key');
+
+const map = new K;</code></pre>
+      <h4>ECMAScript</h4>
+      <pre><code>import K from '@taufik-nurrohman/key';
+
+const map = new K;</code></pre>
+      <h2>Examples</h2>
+      <p><em>None.</em></p>
+      <h2>Settings</h2>
+      <table border="1">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>source</code></td>
+            <td>The object that will becomes <code>this</code> context in the command.</td>
+          </tr>
+        </tbody>
+      </table>
+      <pre><code>const map = new K(source = {});</code></pre>
+      <h2>Methods and Properties</h2>
+      <h3>K.version</h3>
+      <p>Return the key version.</p>
+      <pre><code>let version = K.version,
+    major = version.split('.')[0];
+
+if (+major &lt; 2) {
+    // &hellip;
+}</code></pre>
+      <h3>map.commands</h3>
+      <p>List of commands to be executed on key combination match.</p>
+      <pre><code>// Simple function
+map.commands.bold = function() {
+    // Your `bold` function goes here&hellip;
+    return false; // Return `false` to tell the event that it has to prevent the default effect
+};
+
+// Function with argument(s)
+map.commands.insertLink = function(href = 'http://') {
+    // Your `insertLink` function goes here&hellip;
+    // Return `void` will be normalized into `true` by `map.fire()` method.
+};</code></pre>
+      <p>Example context usage, using <a href="../text-editor">@taufik-nurrohman/text-editor</a>.</p>
+      <pre><code>import K from '@taufik-nurrohman/key';
+import TE from '@taufik-nurrohman/text-editor';
+
+const editor = new TE(document.querySelector('textarea'));
+const map = new K(editor);
+
+map.commands.bold = function() {
+    return this.wrap('&lt;b&gt;', '&lt;/b&gt;'), false; // `this` refers to the `editor`
+};</code></pre>
+      <h3>map.fire(command)</h3>
+      <p>Execute command data returned by <code>map.test()</code> method.</p>
+      <pre><code>// &hellip;
+let command = map.test();
+if (command) {
+    let value = map.fire(command);
+    if (false === value) {
+        e.preventDefault();
+    } else if (null === value) {
+        console.error('Unknown command:', command);
+    }
+}</code></pre>
+      <h3>map.keys</h3>
+      <p>List of key combination with its command that will be returned by <code>map.test()</code>. Key names follow the <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values" rel="nofollow" target="_blank"><code>KeyboardEvent.prototype.key</code></a> specification.</p>
+      <pre><code>// Anonymous function
+map.keys['Control-b'] = function() {
+    return this.wrap('&lt;b&gt;', '&lt;/b&gt;'), false;
+};
+
+// Named function without argument(s)
+map.keys['Control-b'] = 'bold'; // This will execute `map.commands.bold` command if available
+
+// Named function with argument(s)
+map.keys['Control-k'] = ['insertLink', ['http://']]; // This will execute `map.commands.insertLink` command if available</code></pre>
+      <h3>map.pull(key)</h3>
+      <p>Remove key from the queue.</p>
+      <pre><code>source.addEventListener('blur', e => {
+    map.pull(); // Reset all!
+});
+
+source.addEventListener('keyup', e => {
+    map.pull(e.key);
+});</code></pre>
+      <h3>map.push(key)</h3>
+      <p>Add key to the queue.</p>
+      <pre><code>source.addEventListener('keydown', e => {
+    map.push(e.key);
+});</code></pre>
+      <h3>map.test()</h3>
+      <p>Test if current key combination exists.</p>
+      <pre><code>source.addEventListener('keydown', e => {
+    map.push(e.key);
+    let command = map.test();
+    if (command) {
+        console.log(command);
+    }
+});</code></pre>
+      <h3>map.toString()</h3>
+      <p>Return the current key combination.</p>
+      <pre><code>source.addEventListener('keydown', e => {
+    map.push(e.key);
+    console.log(map + "");
+});</code></pre>
+      <h2>License</h2>
+      <p>Use it for free, pay if you get paid. So, you&rsquo;ve just benefited financially after using this project? It&rsquo;s a good idea to <a href="https://paypal.me/tatautaufik" target="_blank">share a little financial support</a> with this open source project too. Your support will motivate me to do any further development, as well as to provide voluntary support to overcome problems related to this project.</p>
+      <p>Thank you! ❤️</p>
+    </main>
+    <footer>
+      <hr>
+      <p>&copy; 2021 <a href="/">Taufik Nurrohman</a></p>
+    </footer>
+    <script src="index.js"></script>
     <script>
-    var input = document.querySelectorAll('input'),
-        p = document.querySelectorAll('p');
-    (new K()).set();
-    input[0].addEventListener("keydown", function(e) {
-        this.value = "";
-        p[1].innerHTML = '<span style="display:block;"><mark style="white-space:pre;">' + e.K.key() + '</mark></span>' + p[1].innerHTML;
-    }, false);
+      const map = new K;
+      const source = document.querySelector('#in'),
+          test = document.querySelector('#out');
+
+      map.commands.bold = function() {
+          return console.log('Bold function goes here…'), false;
+      };
+
+      map.commands.insertLink = function(href) {
+          let value = window.prompt('URL:', href);
+          if (value) {
+              console.log('Link function goes here…');
+              console.info('Current link value is: ' + value);
+          }
+          return false;
+      };
+
+      map.keys['Control-a'] = function() {};
+      map.keys['Control-b'] = 'bold';
+      map.keys['Control-c'] = function() {};
+      map.keys['Control-i'] = 'italic';
+      map.keys['Control-k'] = ['insertLink', ['http://']];
+      map.keys['Control-v'] = function() {};
+      map.keys['Control-x'] = function() {};
+
+      source.addEventListener('blur', e => {
+          map.pull(); // Reset all!
+      });
+
+      source.addEventListener('keydown', e => {
+          map.push(e.key);
+          let command = map.test();
+          test.style.color = command ? '#090' : '#900';
+          test.innerHTML = '<b>' + map + '</b> (command' + (command ? "" : ' does not') + ' exist)';
+          let value = map.fire(command);
+          if (false === value) {
+              e.preventDefault();
+          }
+      });
+
+      source.addEventListener('keyup', e => {
+          map.pull(e.key);
+      });
     </script>
   </body>
 </html>
