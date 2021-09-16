@@ -1,7 +1,7 @@
 import {isArray, isFunction, isSet, isString} from '@taufik-nurrohman/is';
 import {toObjectKeys} from '@taufik-nurrohman/to';
 
-function K(context = {}) {
+function K(source = {}) {
 
     let $ = this,
         keys = {};
@@ -9,7 +9,8 @@ function K(context = {}) {
     $.commands = {};
 
     $.fire = command => {
-        let value, exist;
+        let context = $.source,
+            value, exist;
         if (isFunction(command)) {
             value = command.call(context);
             exist = true;
@@ -38,6 +39,8 @@ function K(context = {}) {
     $.push = key => {
         return (keys[key] = 1), $;
     };
+
+    $.source = source;
 
     $.test = () => {
         let command = $.keys[$.toString()];

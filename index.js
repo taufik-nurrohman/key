@@ -49,12 +49,14 @@
         return Object.keys(x);
     };
 
-    function K(context = {}) {
+    function K(source = {}) {
         let $ = this,
             keys = {};
         $.commands = {};
         $.fire = command => {
-            let value, exist;
+            let context = $.source,
+                value,
+                exist;
             if (isFunction(command)) {
                 value = command.call(context);
                 exist = true;
@@ -80,6 +82,7 @@
         $.push = key => {
             return keys[key] = 1, $;
         };
+        $.source = source;
         $.test = () => {
             let command = $.keys[$.toString()];
             return isSet(command) ? command : false;
@@ -89,6 +92,6 @@
         };
         return $;
     }
-    K.version = '2.0.1';
+    K.version = '2.0.2';
     return K;
 });
