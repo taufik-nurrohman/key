@@ -50,8 +50,7 @@
     };
 
     function K(source = {}) {
-        let $ = this,
-            keys = {};
+        let $ = this;
         $.commands = {};
         $.fire = command => {
             let context = $.source,
@@ -72,26 +71,29 @@
             }
             return exist ? isSet(value) ? value : true : null;
         };
+        $.key = null;
         $.keys = {};
         $.pull = key => {
+            $.key = null;
             if (!isSet(key)) {
-                return keys = {}, $;
+                return $.queue = {}, $;
             }
-            return delete keys[key], $;
+            return delete $.queue[key], $;
         };
         $.push = key => {
-            return keys[key] = 1, $;
+            return $.queue[$.key = key] = 1, $;
         };
+        $.queue = {};
         $.source = source;
         $.test = () => {
             let command = $.keys[$.toString()];
             return isSet(command) ? command : false;
         };
         $.toString = () => {
-            return toObjectKeys(keys).join('-');
+            return toObjectKeys($.queue).join('-');
         };
         return $;
     }
-    K.version = '2.0.2';
+    K.version = '2.0.3';
     return K;
 });
