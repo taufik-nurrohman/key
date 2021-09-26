@@ -5,7 +5,7 @@
     <meta content="#000" name="theme-color">
     <meta content="width=device-width" name="viewport">
     <meta content="Micro JavaScript hotkey/keymap system." name="description">
-    <title>Key 2.0.3</title>
+    <title>Key 2.0.4</title>
     <style>
       * {
         box-sizing: border-box;
@@ -69,7 +69,7 @@
   <body>
     <p>Do you like this project? Please support my <a href="https://github.com/mecha-cms">Mecha CMS</a> project too. Thank you!</p>
     <header>
-      <h1>Key 2.0.3</h1>
+      <h1>Key 2.0.4</h1>
       <p>Micro JavaScript <em>hotkey</em>/<em>keymap</em> system.</p>
       <hr>
     </header>
@@ -96,16 +96,13 @@
     &lt;script&gt;
       const map = new K;
       const source = document.querySelector('textarea');
-      source.addEventListener('blur', e =&gt; {
-          map.pull(); // Reset all!
-      });
+      source.addEventListener('blur', e =&gt; map.pull()); // Reset!
+      source.addEventListener('input', e =&gt; map.pull()); // Reset!
       source.addEventListener('keydown', e =&gt; {
           map.push(e.key);
           console.log(map.toString());
       });
-      source.addEventListener('keyup', e =&gt; {
-          map.pull(e.key);
-      });
+      source.addEventListener('keyup', e =&gt; map.pull(e.key));
     &lt;/script&gt;
   &lt;/body&gt;
 &lt;/html&gt;</code></pre>
@@ -120,7 +117,9 @@ const map = new K;</code></pre>
 
 const map = new K;</code></pre>
       <h2>Examples</h2>
-      <p><em>None.</em></p>
+      <ul>
+        <li><a href="tweak/sequence.html">Sequential Keys</a></li>
+      </ul>
       <h2>Settings</h2>
       <table border="1">
         <thead>
@@ -138,14 +137,6 @@ const map = new K;</code></pre>
       </table>
       <pre><code>const map = new K(source = {});</code></pre>
       <h2>Methods and Properties</h2>
-      <h3>K.version</h3>
-      <p>Return the key version.</p>
-      <pre><code>let version = K.version,
-    major = version.split('.')[0];
-
-if (+major &lt; 2) {
-    // &hellip;
-}</code></pre>
       <h3>map.commands</h3>
       <p>List of commands to be executed on key combination match.</p>
       <pre><code>// Simple function
@@ -195,18 +186,12 @@ map.keys['Control-b'] = 'bold'; // This will execute `map.commands.bold` command
 map.keys['Control-k'] = ['insertLink', ['http://']]; // This will execute `map.commands.insertLink` command if available</code></pre>
       <h3>map.pull(key)</h3>
       <p>Remove key from the queue.</p>
-      <pre><code>source.addEventListener('blur', e => {
-    map.pull(); // Reset all!
-});
-
-source.addEventListener('keyup', e => {
-    map.pull(e.key);
-});</code></pre>
+      <pre><code>source.addEventListener('blur', e => map.pull());
+source.addEventListener('input', e => map.pull());
+source.addEventListener('keyup', e => map.pull(e.key));</code></pre>
       <h3>map.push(key)</h3>
       <p>Add key to the queue.</p>
-      <pre><code>source.addEventListener('keydown', e => {
-    map.push(e.key);
-});</code></pre>
+      <pre><code>source.addEventListener('keydown', e => map.push(e.key));</code></pre>
       <h3>map.test()</h3>
       <p>Test if current key combination exists.</p>
       <pre><code>source.addEventListener('keydown', e => {
@@ -220,7 +205,7 @@ source.addEventListener('keyup', e => {
       <p>Return the current key combination.</p>
       <pre><code>source.addEventListener('keydown', e => {
     map.push(e.key);
-    console.log(map + "");
+    console.info(map + "");
 });</code></pre>
       <h2>License</h2>
       <p>Use it for free, pay if you get paid. So, you&rsquo;ve just benefited financially after using this project? It&rsquo;s a good idea to <a href="https://paypal.me/tatautaufik" target="_blank">share a little financial support</a> with this open source project too. Your support will motivate me to do any further development, as well as to provide voluntary support to overcome problems related to this project.</p>
@@ -257,9 +242,8 @@ source.addEventListener('keyup', e => {
       map.keys['Control-v'] = function() {};
       map.keys['Control-x'] = function() {};
 
-      source.addEventListener('blur', e => {
-          map.pull(); // Reset all!
-      });
+      source.addEventListener('blur', e => map.pull());
+      source.addEventListener('input', e => map.pull());
 
       source.addEventListener('keydown', e => {
           map.push(e.key);
@@ -272,9 +256,7 @@ source.addEventListener('keyup', e => {
           }
       });
 
-      source.addEventListener('keyup', e => {
-          map.pull(e.key);
-      });
+      source.addEventListener('keyup', e => map.pull(e.key));
     </script>
   </body>
 </html>

@@ -32,9 +32,8 @@ block script
     | map.keys['Control-v'] = function() {};
     | map.keys['Control-x'] = function() {};
     |
-    | source.addEventListener('blur', e => {
-    |     map.pull(); // Reset all!
-    | });
+    | source.addEventListener('blur', e => map.pull());
+    | source.addEventListener('input', e => map.pull());
     |
     | source.addEventListener('keydown', e => {
     |     map.push(e.key);
@@ -47,9 +46,7 @@ block script
     |     }
     | });
     |
-    | source.addEventListener('keyup', e => {
-    |    map.pull(e.key);
-    | });
+    | source.addEventListener('keyup', e => map.pull(e.key));
 
 block style
   style
@@ -137,16 +134,13 @@ block content
       |     &lt;script&gt;
       |       const map = new K;
       |       const source = document.querySelector('textarea');
-      |       source.addEventListener('blur', e =&gt; {
-      |           map.pull(); // Reset all!
-      |       });
+      |       source.addEventListener('blur', e =&gt; map.pull()); // Reset!
+      |       source.addEventListener('input', e =&gt; map.pull()); // Reset!
       |       source.addEventListener('keydown', e =&gt; {
       |           map.push(e.key);
       |           console.log(map.toString());
       |       });
-      |       source.addEventListener('keyup', e =&gt; {
-      |           map.pull(e.key);
-      |       });
+      |       source.addEventListener('keyup', e =&gt; map.pull(e.key));
       |     &lt;/script&gt;
       |   &lt;/body&gt;
       | &lt;/html&gt;
@@ -163,7 +157,8 @@ block content
       |
       | const map = new K;
     h2 Examples
-    p: em None.
+    ul
+      li: a(href='tweak/sequence.html') Sequential Keys
     h2 Settings
     table(border='1')
       thead
@@ -177,15 +172,6 @@ block content
     pre: code
       | const map = new K(source = {});
     h2 Methods and Properties
-    h3 K.version
-    p Return the key version.
-    pre: code
-      | let version = K.version,
-      |     major = version.split('.')[0];
-      |
-      | if (+major &lt; 2) {
-      |     // &hellip;
-      | }
     h3 map.commands
     p List of commands to be executed on key combination match.
     pre: code
@@ -240,19 +226,13 @@ block content
     h3 map.pull(key)
     p Remove key from the queue.
     pre: code
-      | source.addEventListener('blur', e => {
-      |     map.pull(); // Reset all!
-      | });
-      |
-      | source.addEventListener('keyup', e => {
-      |     map.pull(e.key);
-      | });
+      | source.addEventListener('blur', e => map.pull());
+      | source.addEventListener('input', e => map.pull());
+      | source.addEventListener('keyup', e => map.pull(e.key));
     h3 map.push(key)
     p Add key to the queue.
     pre: code
-      | source.addEventListener('keydown', e => {
-      |     map.push(e.key);
-      | });
+      | source.addEventListener('keydown', e => map.push(e.key));
     h3 map.test()
     p Test if current key combination exists.
     pre: code
@@ -268,7 +248,7 @@ block content
     pre: code
       | source.addEventListener('keydown', e => {
       |     map.push(e.key);
-      |     console.log(map + "");
+      |     console.info(map + "");
       | });
     h2 License
     p Use it for free, pay if you get paid. So, you&rsquo;ve just benefited financially after using this project? It&rsquo;s a good idea to #[a(href='https://paypal.me/tatautaufik' target='_blank') share a little financial support] with this open source project too. Your support will motivate me to do any further development, as well as to provide voluntary support to overcome problems related to this project.

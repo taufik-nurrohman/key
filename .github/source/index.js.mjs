@@ -59,6 +59,4 @@ function K(source = {}) {
 
 }
 
-K.version = '%(version)';
-
 export default K;

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta content="width=device-width" name="viewport">
+    <meta content="Micro JavaScript hotkey/keymap system." name="description">
+    <title>Key</title>
+  </head>
+  <body>
+    <main>
+      <p>Press <kbd>Control-Alt-w</kbd> then <kbd>h</kbd> or <kbd>j</kbd> or <kbd>k</kbd> or <kbd>l</kbd> or <kbd>w</kbd>.</p>
+    </main>
+    <script src="../index.min.js"></script>
+    <script>
+      const map = new K(window);
+
+      let waitingForTheNextCommand = false;
+
+      map.commands.window = function() {
+          console.info('Waiting for the next command…');
+          waitingForTheNextCommand = 'window';
+          return false; // Trigger `e.preventDefault()`
+      };
+
+      map.commands.windowDown = function() {
+          if ('window' === waitingForTheNextCommand) {
+              alert('Down window!');
+              waitingForTheNextCommand = false;
+              return false;
+          }
+      };
+
+      map.commands.windowLeft = function() {
+          if ('window' === waitingForTheNextCommand) {
+              alert('Left window!');
+              waitingForTheNextCommand = false;
+              return false;
+          }
+      };
+
+      map.commands.windowNext = function() {
+          if ('window' === waitingForTheNextCommand) {
+              alert('Next window!');
+              waitingForTheNextCommand = false;
+              return false;
+          }
+      };
+
+      map.commands.windowRight = function() {
+          if ('window' === waitingForTheNextCommand) {
+              alert('Right window!');
+              waitingForTheNextCommand = false;
+              return false;
+          }
+      };
+
+      map.commands.windowUp = function() {
+          if ('window' === waitingForTheNextCommand) {
+              alert('Up window!');
+              waitingForTheNextCommand = false;
+              return false;
+          }
+      };
+
+      map.keys['ArrowDown'] = 'windowDown';
+      map.keys['ArrowLeft'] = 'windowLeft';
+      map.keys['ArrowRight'] = 'windowRight';
+      map.keys['ArrowUp'] = 'windowUp';
+      map.keys['Control-Alt-w'] = 'window';
+      map.keys['h'] = 'windowLeft';
+      map.keys['j'] = 'windowDown';
+      map.keys['k'] = 'windowUp';
+      map.keys['l'] = 'windowRight';
+      map.keys['w'] = 'windowNext';
+
+      window.addEventListener('blur', e => map.pull());
+      window.addEventListener('input', e => map.pull());
+
+      window.addEventListener('keydown', e => {
+          map.push(e.key);
+          let command = map.test();
+          if (command) {
+              let value = map.fire(command);
+              if (false === value) {
+                  e.preventDefault();
+              } else if (null === value) {
+                  console.error('Unknown command:', command);
+                  waitingForTheNextCommand = false;
+              }
+          } else {
+              waitingForTheNextCommand = false;
+              console.info('Current key:', e.key);
+          }
+      });
+
+      window.addEventListener('keyup', e => map.pull(e.key));
+    </script>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta content="width=device-width" name="viewport">
+    <meta content="Micro JavaScript hotkey/keymap system." name="description">
+    <title>Key</title>
+  </head>
+  <body>
+    <main>
+      <p><textarea></textarea></p>
+    </main>
+    <script src="index.min.js"></script>
+    <script>
+      const source = document.querySelector('textarea');
+      const map = new K(source);
+
+      map.commands.bold = function() {
+          console.info('Bold command goes here…');
+          return false; // Trigger `e.preventDefault()`
+      };
+
+      map.keys['Control-b'] = 'bold';
+
+      source.addEventListener('blur', e => map.pull());
+      source.addEventListener('input', e => map.pull());
+
+      source.addEventListener('keydown', e => {
+          map.push(e.key);
+          let command = map.test();
+          if (command) {
+              let value = map.fire(command);
+              if (false === value) {
+                  e.preventDefault();
+              } else if (null === value) {
+                  console.error('Unknown command:', command);
+              }
+          } else {
+              console.info('Current key:', e.key);
+          }
+      });
+
+      source.addEventListener('keyup', e => map.pull(e.key));
+    </script>
+  </body>
+</html>
