@@ -2,7 +2,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright © 2021 Taufik Nurrohman <https://github.com/taufik-nurrohman>
+ * Copyright © 2022 Taufik Nurrohman <https://github.com/taufik-nurrohman>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the “Software”), to deal
@@ -23,9 +23,9 @@
  * SOFTWARE.
  *
  */
-(function(global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() : typeof define === 'function' && define.amd ? define(factory) : (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.K = factory());
-})(this, function() {
+(function(g, f) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = f() : typeof define === 'function' && define.amd ? define(f) : (g = typeof globalThis !== 'undefined' ? globalThis : g || self, g.K = f());
+})(this, (function() {
     'use strict';
     var isArray = function isArray(x) {
         return Array.isArray(x);
@@ -49,11 +49,21 @@
         return Object.keys(x);
     };
 
-    function K(source = {}) {
-        let $ = this;
+    function K(source) {
+        if (source === void 0) {
+            source = {};
+        }
+        var $ = this;
+        $.command = function(v) {
+            if (isString(v)) {
+                return v === $.toString();
+            }
+            var command = $.keys[$.toString()];
+            return isSet(command) ? command : false;
+        };
         $.commands = {};
-        $.fire = command => {
-            let context = $.source,
+        $.fire = function(command) {
+            var context = $.source,
                 value,
                 exist;
             if (isFunction(command)) {
@@ -63,7 +73,7 @@
                 value = command.call(context);
                 exist = true;
             } else if (isArray(command)) {
-                let data = command[1] || [];
+                var data = command[1] || [];
                 if (command = $.commands[command[0]]) {
                     value = command.apply(context, data);
                     exist = true;
@@ -73,26 +83,22 @@
         };
         $.key = null;
         $.keys = {};
-        $.pull = key => {
+        $.pull = function(key) {
             $.key = null;
             if (!isSet(key)) {
                 return $.queue = {}, $;
             }
             return delete $.queue[key], $;
         };
-        $.push = key => {
+        $.push = function(key) {
             return $.queue[$.key = key] = 1, $;
         };
         $.queue = {};
         $.source = source;
-        $.test = () => {
-            let command = $.keys[$.toString()];
-            return isSet(command) ? command : false;
-        };
-        $.toString = () => {
+        $.toString = function() {
             return toObjectKeys($.queue).join('-');
         };
         return $;
     }
     return K;
-});
+}));

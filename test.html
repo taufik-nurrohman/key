@@ -14,20 +14,17 @@
     <script>
       const source = document.querySelector('textarea');
       const map = new K(source);
-
       map.commands.bold = function() {
           console.info('Bold command goes here…');
           return false; // Trigger `e.preventDefault()`
       };
-
       map.keys['Control-b'] = 'bold';
-
       source.addEventListener('blur', e => map.pull());
       source.addEventListener('input', e => map.pull());
-
+      let debounce;
       source.addEventListener('keydown', e => {
           map.push(e.key);
-          let command = map.test();
+          let command = map.command();
           if (command) {
               let value = map.fire(command);
               if (false === value) {
@@ -38,8 +35,9 @@
           } else {
               console.info('Current key:', e.key);
           }
+          debounce && clearTimeout(debounce);
+          debounce = setTimeout(() => map.pull(), 1000);
       });
-
       source.addEventListener('keyup', e => map.pull(e.key));
     </script>
   </body>

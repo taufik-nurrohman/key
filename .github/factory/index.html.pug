@@ -35,15 +35,18 @@ block script
     | source.addEventListener('blur', e => map.pull());
     | source.addEventListener('input', e => map.pull());
     |
+    | let debounce;
     | source.addEventListener('keydown', e => {
     |     map.push(e.key);
-    |     let command = map.test();
+    |     let command = map.command();
     |     let value = map.fire(command);
     |     test.style.color = null !== value ? '#090' : '#900';
     |     test.innerHTML = '<b>' + map + '</b> (command' + (null !== value ? "" : ' does not') + ' exist)';
     |     if (false === value) {
     |         e.preventDefault();
     |     }
+    |     debounce && clearTimeout(debounce);
+    |     debounce = setTimeout(() => map.pull(), 1000);
     | });
     |
     | source.addEventListener('keyup', e => map.pull(e.key));
@@ -96,7 +99,7 @@ block style
     |   text-align: left;
     |   vertical-align: top;
     | }
-    | body > p:first-child {
+    | [role='alert'] {
     |   background: #ffa;
     |   border: 1px dashed;
     |   margin-top: 0;
@@ -104,7 +107,7 @@ block style
     | }
 
 block content
-  p Do you like this project? Please support my #[a(href='https://github.com/mecha-cms') Mecha CMS] project too. Thank you!
+  p(role='alert') Do you like this project? Please support my #[a(href='https://github.com/mecha-cms') Mecha CMS] project too. Thank you!
   header
     h1= title
     p Micro JavaScript #[em hotkey]/#[em keymap] system.
@@ -136,9 +139,12 @@ block content
       |       const source = document.querySelector('textarea');
       |       source.addEventListener('blur', e =&gt; map.pull()); // Reset!
       |       source.addEventListener('input', e =&gt; map.pull()); // Reset!
+      |       let debounce;
       |       source.addEventListener('keydown', e =&gt; {
       |           map.push(e.key);
       |           console.log(map.toString());
+      |           debounce && clearTimeout(debounce);
+      |           debounce = setTimeout(() => map.pull(), 1000); // Reset after 1 second idle!
       |       });
       |       source.addEventListener('keyup', e =&gt; map.pull(e.key));
       |     &lt;/script&gt;
@@ -148,7 +154,7 @@ block content
     p Functions and methods in this application are mostly native JavaScript and are intended for use by the browser. Node.js doesn&rsquo;t know about the DOM, so this kind of practice will probably be used more often to build new browser packages than to be used directly in the Node.js server.
     h4 CommonJS
     pre: code
-      | const K = require('@taufik-nurrohman/key');
+      | const K = require('@taufik-nurrohman/key').default;
       |
       | const map = new K;
     h4 ECMAScript
@@ -168,10 +174,28 @@ block content
       tbody
         tr
           td: code source
-          td The object that will becomes #[code this] context in the command.
+          td The object that will becomes the #[code this] context in the command.
     pre: code
       | const map = new K(source = {});
     h2 Methods and Properties
+    h3 map.command()
+    p Test if current key combination exists.
+    pre: code
+      | source.addEventListener('keydown', e => {
+      |     map.push(e.key);
+      |     let command = map.command();
+      |     if (command) {
+      |         console.log(command);
+      |     }
+      | });
+    p Test if current key combination is #[code Control+b].
+    pre: code
+      | source.addEventListener('keydown', e => {
+      |     map.push(e.key);
+      |     if (map.command('Control+b')) {
+      |         console.log('Bold!');
+      |     }
+      | });
     h3 map.commands
     p List of commands to be executed on key combination match.
     pre: code
@@ -201,7 +225,7 @@ block content
     p Execute command data returned by #[code map.test()] method.
     pre: code
       | // &hellip;
-      | let command = map.test();
+      | let command = map.command();
       | if (command) {
       |     let value = map.fire(command);
       |     if (false === value) {
@@ -233,16 +257,6 @@ block content
     p Add key to the queue.
     pre: code
       | source.addEventListener('keydown', e => map.push(e.key));
-    h3 map.test()
-    p Test if current key combination exists.
-    pre: code
-      | source.addEventListener('keydown', e => {
-      |     map.push(e.key);
-      |     let command = map.test();
-      |     if (command) {
-      |         console.log(command);
-      |     }
-      | });
     h3 map.toString()
     p Return the current key combination.
     pre: code

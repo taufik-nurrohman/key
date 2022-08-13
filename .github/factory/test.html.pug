@@ -19,9 +19,10 @@ block script
     | source.addEventListener('blur', e => map.pull());
     | source.addEventListener('input', e => map.pull());
     |
+    | let debounce;
     | source.addEventListener('keydown', e => {
     |     map.push(e.key);
-    |     let command = map.test();
+    |     let command = map.command();
     |     if (command) {
     |         let value = map.fire(command);
     |         if (false === value) {
@@ -32,6 +33,8 @@ block script
     |     } else {
     |         console.info('Current key:', e.key);
     |     }
+    |     debounce && clearTimeout(debounce);
+    |     debounce = setTimeout(() => map.pull(), 1000);
     | });
     |
     | source.addEventListener('keyup', e => map.pull(e.key));

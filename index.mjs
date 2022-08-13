@@ -5,6 +5,14 @@ function K(source = {}) {
 
     let $ = this;
 
+    $.command = v => {
+        if (isString(v)) {
+            return v === $.toString();
+        }
+        let command = $.keys[$.toString()];
+        return isSet(command) ? command : false;
+    };
+
     $.commands = {};
 
     $.fire = command => {
@@ -45,11 +53,6 @@ function K(source = {}) {
     $.queue = {};
 
     $.source = source;
-
-    $.test = () => {
-        let command = $.keys[$.toString()];
-        return isSet(command) ? command : false;
-    };
 
     $.toString = () => {
         return toObjectKeys($.queue).join('-');

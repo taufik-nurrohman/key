@@ -5,7 +5,7 @@
     <meta content="#000" name="theme-color">
     <meta content="width=device-width" name="viewport">
     <meta content="Micro JavaScript hotkey/keymap system." name="description">
-    <title>Key 2.0.4</title>
+    <title>Key 2.1.0</title>
     <style>
       * {
         box-sizing: border-box;
@@ -58,7 +58,7 @@
         text-align: left;
         vertical-align: top;
       }
-      body > p:first-child {
+      [role='alert'] {
         background: #ffa;
         border: 1px dashed;
         margin-top: 0;
@@ -67,9 +67,9 @@
     </style>
   </head>
   <body>
-    <p>Do you like this project? Please support my <a href="https://github.com/mecha-cms">Mecha CMS</a> project too. Thank you!</p>
+    <p role="alert">Do you like this project? Please support my <a href="https://github.com/mecha-cms">Mecha CMS</a> project too. Thank you!</p>
     <header>
-      <h1>Key 2.0.4</h1>
+      <h1>Key 2.1.0</h1>
       <p>Micro JavaScript <em>hotkey</em>/<em>keymap</em> system.</p>
       <hr>
     </header>
@@ -98,9 +98,12 @@
       const source = document.querySelector('textarea');
       source.addEventListener('blur', e =&gt; map.pull()); // Reset!
       source.addEventListener('input', e =&gt; map.pull()); // Reset!
+      let debounce;
       source.addEventListener('keydown', e =&gt; {
           map.push(e.key);
           console.log(map.toString());
+          debounce && clearTimeout(debounce);
+          debounce = setTimeout(() => map.pull(), 1000); // Reset after 1 second idle!
       });
       source.addEventListener('keyup', e =&gt; map.pull(e.key));
     &lt;/script&gt;
@@ -109,7 +112,7 @@
       <h3>Node.js</h3>
       <p>Functions and methods in this application are mostly native JavaScript and are intended for use by the browser. Node.js doesn&rsquo;t know about the DOM, so this kind of practice will probably be used more often to build new browser packages than to be used directly in the Node.js server.</p>
       <h4>CommonJS</h4>
-      <pre><code>const K = require('@taufik-nurrohman/key');
+      <pre><code>const K = require('@taufik-nurrohman/key').default;
 
 const map = new K;</code></pre>
       <h4>ECMAScript</h4>
@@ -131,12 +134,28 @@ const map = new K;</code></pre>
         <tbody>
           <tr>
             <td><code>source</code></td>
-            <td>The object that will becomes <code>this</code> context in the command.</td>
+            <td>The object that will becomes the <code>this</code> context in the command.</td>
           </tr>
         </tbody>
       </table>
       <pre><code>const map = new K(source = {});</code></pre>
       <h2>Methods and Properties</h2>
+      <h3>map.command()</h3>
+      <p>Test if current key combination exists.</p>
+      <pre><code>source.addEventListener('keydown', e => {
+    map.push(e.key);
+    let command = map.command();
+    if (command) {
+        console.log(command);
+    }
+});</code></pre>
+      <p>Test if current key combination is <code>Control+b</code>.</p>
+      <pre><code>source.addEventListener('keydown', e => {
+    map.push(e.key);
+    if (map.command('Control+b')) {
+        console.log('Bold!');
+    }
+});</code></pre>
       <h3>map.commands</h3>
       <p>List of commands to be executed on key combination match.</p>
       <pre><code>// Simple function
@@ -163,7 +182,7 @@ map.commands.bold = function() {
       <h3>map.fire(command)</h3>
       <p>Execute command data returned by <code>map.test()</code> method.</p>
       <pre><code>// &hellip;
-let command = map.test();
+let command = map.command();
 if (command) {
     let value = map.fire(command);
     if (false === value) {
@@ -192,15 +211,6 @@ source.addEventListener('keyup', e => map.pull(e.key));</code></pre>
       <h3>map.push(key)</h3>
       <p>Add key to the queue.</p>
       <pre><code>source.addEventListener('keydown', e => map.push(e.key));</code></pre>
-      <h3>map.test()</h3>
-      <p>Test if current key combination exists.</p>
-      <pre><code>source.addEventListener('keydown', e => {
-    map.push(e.key);
-    let command = map.test();
-    if (command) {
-        console.log(command);
-    }
-});</code></pre>
       <h3>map.toString()</h3>
       <p>Return the current key combination.</p>
       <pre><code>source.addEventListener('keydown', e => {
@@ -213,18 +223,16 @@ source.addEventListener('keyup', e => map.pull(e.key));</code></pre>
     </main>
     <footer>
       <hr>
-      <p>&copy; 2021 <a href="/">Taufik Nurrohman</a></p>
+      <p>&copy; 2022 <a href="/">Taufik Nurrohman</a></p>
     </footer>
     <script src="index.js"></script>
     <script>
       const map = new K;
       const source = document.querySelector('#in'),
           test = document.querySelector('#out');
-
       map.commands.bold = function() {
           return console.log('Bold function goes here…'), false;
       };
-
       map.commands.insertLink = function(href) {
           let value = window.prompt('URL:', href);
           if (value) {
@@ -233,7 +241,6 @@ source.addEventListener('keyup', e => map.pull(e.key));</code></pre>
           }
           return false;
       };
-
       map.keys['Control-a'] = function() {};
       map.keys['Control-b'] = 'bold';
       map.keys['Control-c'] = function() {};
@@ -241,21 +248,21 @@ source.addEventListener('keyup', e => map.pull(e.key));</code></pre>
       map.keys['Control-k'] = ['insertLink', ['http://']];
       map.keys['Control-v'] = function() {};
       map.keys['Control-x'] = function() {};
-
       source.addEventListener('blur', e => map.pull());
       source.addEventListener('input', e => map.pull());
-
+      let debounce;
       source.addEventListener('keydown', e => {
           map.push(e.key);
-          let command = map.test();
+          let command = map.command();
           let value = map.fire(command);
           test.style.color = null !== value ? '#090' : '#900';
           test.innerHTML = '<b>' + map + '</b> (command' + (null !== value ? "" : ' does not') + ' exist)';
           if (false === value) {
               e.preventDefault();
           }
+          debounce && clearTimeout(debounce);
+          debounce = setTimeout(() => map.pull(), 1000);
       });
-
       source.addEventListener('keyup', e => map.pull(e.key));
     </script>
   </body>

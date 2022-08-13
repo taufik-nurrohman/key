@@ -10,6 +10,11 @@ block script
     |
     | let waitingForTheNextCommand = false;
     |
+    | map.commands.reset = function() {
+    |     waitingForTheNextCommand = false;
+    |     return false;
+    | };
+    |
     | map.commands.window = function() {
     |     console.info('Waiting for the next command…');
     |     waitingForTheNextCommand = 'window';
@@ -61,6 +66,7 @@ block script
     | map.keys['ArrowRight'] = 'windowRight';
     | map.keys['ArrowUp'] = 'windowUp';
     | map.keys['Control-Alt-w'] = 'window';
+    | map.keys['Escape'] = 'reset';
     | map.keys['h'] = 'windowLeft';
     | map.keys['j'] = 'windowDown';
     | map.keys['k'] = 'windowUp';
@@ -70,9 +76,10 @@ block script
     | window.addEventListener('blur', e => map.pull());
     | window.addEventListener('input', e => map.pull());
     |
+    | let debounce;
     | window.addEventListener('keydown', e => {
     |     map.push(e.key);
-    |     let command = map.test();
+    |     let command = map.command();
     |     if (command) {
     |         let value = map.fire(command);
     |         if (false === value) {
@@ -85,6 +92,8 @@ block script
     |         waitingForTheNextCommand = false;
     |         console.info('Current key:', e.key);
     |     }
+    |     debounce && clearTimeout(debounce);
+    |     debounce = setTimeout(() => map.pull(), 1000);
     | });
     |
     | window.addEventListener('keyup', e => map.pull(e.key));

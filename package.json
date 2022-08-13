@@ -2,12 +2,12 @@
   "author": "Taufik Nurrohman",
   "bugs": "https://github.com/taufik-nurrohman/key/issues",
   "dependencies": {
-    "@taufik-nurrohman/is": "^0.1.2",
-    "@taufik-nurrohman/to": "^0.0.18"
+    "@taufik-nurrohman/is": "*",
+    "@taufik-nurrohman/to": "*"
   },
   "description": "Micro JavaScript hotkey/keymap system.",
   "devDependencies": {
-    "@taufik-nurrohman/factory": "^0.1.20"
+    "@taufik-nurrohman/factory": "*"
   },
   "exports": {
     "import": "./index.mjs",
@@ -36,8 +36,7 @@
     "url": "git+https://github.com/taufik-nurrohman/key.git"
   },
   "scripts": {
-    "pack": "pack --clean=false --from=.github/source --js-format=umd --js-name=K --js-top='%(js.license)' --mjs=true --to=."
+    "pack": "pack --clean=false --from=.github/factory --js-format=umd --js-name=K --js-top='%(js.license)' --mjs=true --to=."
   },
-  "type": "module",
-  "version": "2.0.4"
+  "version": "2.1.0"
 }
