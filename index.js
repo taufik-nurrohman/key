@@ -23,9 +23,9 @@
  * SOFTWARE.
  *
  */
-(function(g, f) {
+(function (g, f) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = f() : typeof define === 'function' && define.amd ? define(f) : (g = typeof globalThis !== 'undefined' ? globalThis : g || self, g.K = f());
-})(this, (function() {
+})(this, (function () {
     'use strict';
     var isArray = function isArray(x) {
         return Array.isArray(x);
@@ -54,7 +54,7 @@
             source = {};
         }
         var $ = this;
-        $.command = function(v) {
+        $.command = function (v) {
             if (isString(v)) {
                 return v === $.toString();
             }
@@ -62,7 +62,7 @@
             return isSet(command) ? command : false;
         };
         $.commands = {};
-        $.fire = function(command) {
+        $.fire = function (command) {
             var context = $.source,
                 value,
                 exist;
@@ -83,19 +83,19 @@
         };
         $.key = null;
         $.keys = {};
-        $.pull = function(key) {
+        $.pull = function (key) {
             $.key = null;
             if (!isSet(key)) {
                 return $.queue = {}, $;
             }
             return delete $.queue[key], $;
         };
-        $.push = function(key) {
+        $.push = function (key) {
             return $.queue[$.key = key] = 1, $;
         };
         $.queue = {};
         $.source = source;
-        $.toString = function() {
+        $.toString = function () {
             return toObjectKeys($.queue).join('-');
         };
         return $;

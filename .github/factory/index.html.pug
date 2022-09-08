@@ -11,11 +11,11 @@ block script
     | const source = document.querySelector('#in'),
     |       test = document.querySelector('#out');
     |
-    | map.commands.bold = function() {
+    | map.commands.bold = function () {
     |     return console.log('Bold function goes here…'), false;
     | };
     |
-    | map.commands.insertLink = function(href) {
+    | map.commands.insertLink = function (href) {
     |     let value = window.prompt('URL:', href);
     |     if (value) {
     |         console.log('Link function goes here…');
@@ -24,13 +24,13 @@ block script
     |     return false;
     | };
     |
-    | map.keys['Control-a'] = function() {};
+    | map.keys['Control-a'] = function () {};
     | map.keys['Control-b'] = 'bold';
-    | map.keys['Control-c'] = function() {};
+    | map.keys['Control-c'] = function () {};
     | map.keys['Control-i'] = 'italic';
     | map.keys['Control-k'] = ['insertLink', ['http://']];
-    | map.keys['Control-v'] = function() {};
-    | map.keys['Control-x'] = function() {};
+    | map.keys['Control-v'] = function () {};
+    | map.keys['Control-x'] = function () {};
     |
     | source.addEventListener('blur', e => map.pull());
     | source.addEventListener('input', e => map.pull());
@@ -200,13 +200,13 @@ block content
     p List of commands to be executed on key combination match.
     pre: code
       | // Simple function
-      | map.commands.bold = function() {
+      | map.commands.bold = function () {
       |     // Your `bold` function goes here&hellip;
       |     return false; // Return `false` to tell the event that it has to prevent the default effect
       | };
       |
       | // Function with argument(s)
-      | map.commands.insertLink = function(href = 'http://') {
+      | map.commands.insertLink = function (href = 'http://') {
       |     // Your `insertLink` function goes here&hellip;
       |     // Return `void` will be normalized into `true` by `map.fire()` method.
       | };
@@ -218,7 +218,7 @@ block content
       | const editor = new TE(document.querySelector('textarea'));
       | const map = new K(editor);
       |
-      | map.commands.bold = function() {
+      | map.commands.bold = function () {
       |     return this.wrap('&lt;b&gt;', '&lt;/b&gt;'), false; // `this` refers to the `editor`
       | };
     h3 map.fire(command)
@@ -238,7 +238,7 @@ block content
     p List of key combination with its command that will be returned by #[code map.test()]. Key names follow the #[a(href='https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values' rel='nofollow' target='_blank') #[code KeyboardEvent.prototype.key]] specification.
     pre: code
       | // Anonymous function
-      | map.keys['Control-b'] = function() {
+      | map.keys['Control-b'] = function () {
       |     return this.wrap('&lt;b&gt;', '&lt;/b&gt;'), false;
       | };
       |

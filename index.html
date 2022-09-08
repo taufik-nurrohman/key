@@ -5,7 +5,7 @@
     <meta content="#000" name="theme-color">
     <meta content="width=device-width" name="viewport">
     <meta content="Micro JavaScript hotkey/keymap system." name="description">
-    <title>Key 2.1.0</title>
+    <title>Key 2.1.1</title>
     <style>
       * {
         box-sizing: border-box;
@@ -69,7 +69,7 @@
   <body>
     <p role="alert">Do you like this project? Please support my <a href="https://github.com/mecha-cms">Mecha CMS</a> project too. Thank you!</p>
     <header>
-      <h1>Key 2.1.0</h1>
+      <h1>Key 2.1.1</h1>
       <p>Micro JavaScript <em>hotkey</em>/<em>keymap</em> system.</p>
       <hr>
     </header>
@@ -159,13 +159,13 @@ const map = new K;</code></pre>
       <h3>map.commands</h3>
       <p>List of commands to be executed on key combination match.</p>
       <pre><code>// Simple function
-map.commands.bold = function() {
+map.commands.bold = function () {
     // Your `bold` function goes here&hellip;
     return false; // Return `false` to tell the event that it has to prevent the default effect
 };
 
 // Function with argument(s)
-map.commands.insertLink = function(href = 'http://') {
+map.commands.insertLink = function (href = 'http://') {
     // Your `insertLink` function goes here&hellip;
     // Return `void` will be normalized into `true` by `map.fire()` method.
 };</code></pre>
@@ -176,7 +176,7 @@ import TE from '@taufik-nurrohman/text-editor';
 const editor = new TE(document.querySelector('textarea'));
 const map = new K(editor);
 
-map.commands.bold = function() {
+map.commands.bold = function () {
     return this.wrap('&lt;b&gt;', '&lt;/b&gt;'), false; // `this` refers to the `editor`
 };</code></pre>
       <h3>map.fire(command)</h3>
@@ -194,7 +194,7 @@ if (command) {
       <h3>map.keys</h3>
       <p>List of key combination with its command that will be returned by <code>map.test()</code>. Key names follow the <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values" rel="nofollow" target="_blank"><code>KeyboardEvent.prototype.key</code></a> specification.</p>
       <pre><code>// Anonymous function
-map.keys['Control-b'] = function() {
+map.keys['Control-b'] = function () {
     return this.wrap('&lt;b&gt;', '&lt;/b&gt;'), false;
 };
 

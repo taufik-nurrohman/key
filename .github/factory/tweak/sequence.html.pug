@@ -10,18 +10,18 @@ block script
     |
     | let waitingForTheNextCommand = false;
     |
-    | map.commands.reset = function() {
+    | map.commands.reset = function () {
     |     waitingForTheNextCommand = false;
     |     return false;
     | };
     |
-    | map.commands.window = function() {
+    | map.commands.window = function () {
     |     console.info('Waiting for the next command…');
     |     waitingForTheNextCommand = 'window';
     |     return false; // Trigger `e.preventDefault()`
     | };
     |
-    | map.commands.windowDown = function() {
+    | map.commands.windowDown = function () {
     |     if ('window' === waitingForTheNextCommand) {
     |         alert('Down window!');
     |         waitingForTheNextCommand = false;
@@ -29,7 +29,7 @@ block script
     |     }
     | };
     |
-    | map.commands.windowLeft = function() {
+    | map.commands.windowLeft = function () {
     |     if ('window' === waitingForTheNextCommand) {
     |         alert('Left window!');
     |         waitingForTheNextCommand = false;
@@ -37,7 +37,7 @@ block script
     |     }
     | };
     |
-    | map.commands.windowNext = function() {
+    | map.commands.windowNext = function () {
     |     if ('window' === waitingForTheNextCommand) {
     |         alert('Next window!');
     |         waitingForTheNextCommand = false;
@@ -45,7 +45,7 @@ block script
     |     }
     | };
     |
-    | map.commands.windowRight = function() {
+    | map.commands.windowRight = function () {
     |     if ('window' === waitingForTheNextCommand) {
     |         alert('Right window!');
     |         waitingForTheNextCommand = false;
@@ -53,7 +53,7 @@ block script
     |     }
     | };
     |
-    | map.commands.windowUp = function() {
+    | map.commands.windowUp = function () {
     |     if ('window' === waitingForTheNextCommand) {
     |         alert('Up window!');
     |         waitingForTheNextCommand = false;

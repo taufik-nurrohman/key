@@ -38,5 +38,5 @@
   "scripts": {
     "pack": "pack --clean=false --from=.github/factory --js-format=umd --js-name=K --js-top='%(js.license)' --mjs=true --to=."
   },
-  "version": "2.1.0"
+  "version": "2.1.1"
 }
