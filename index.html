@@ -5,7 +5,7 @@
     <meta content="#000" name="theme-color">
     <meta content="width=device-width" name="viewport">
     <meta content="Micro JavaScript hotkey/keymap system." name="description">
-    <title>Key 2.1.1</title>
+    <title>Key 2.1.2</title>
     <style>
       * {
         box-sizing: border-box;
@@ -69,7 +69,7 @@
   <body>
     <p role="alert">Do you like this project? Please support my <a href="https://github.com/mecha-cms">Mecha CMS</a> project too. Thank you!</p>
     <header>
-      <h1>Key 2.1.1</h1>
+      <h1>Key 2.1.2</h1>
       <p>Micro JavaScript <em>hotkey</em>/<em>keymap</em> system.</p>
       <hr>
     </header>
@@ -180,7 +180,7 @@ map.commands.bold = function () {
     return this.wrap('&lt;b&gt;', '&lt;/b&gt;'), false; // `this` refers to the `editor`
 };</code></pre>
       <h3>map.fire(command)</h3>
-      <p>Execute command data returned by <code>map.test()</code> method.</p>
+      <p>Execute command data returned by <code>map.command()</code> method.</p>
       <pre><code>// &hellip;
 let command = map.command();
 if (command) {
@@ -192,7 +192,7 @@ if (command) {
     }
 }</code></pre>
       <h3>map.keys</h3>
-      <p>List of key combination with its command that will be returned by <code>map.test()</code>. Key names follow the <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values" rel="nofollow" target="_blank"><code>KeyboardEvent.prototype.key</code></a> specification.</p>
+      <p>List of key combination with its command that will be returned by <code>map.command()</code>. Key names follow the <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values" rel="nofollow" target="_blank"><code>KeyboardEvent.prototype.key</code></a> specification.</p>
       <pre><code>// Anonymous function
 map.keys['Control-b'] = function () {
     return this.wrap('&lt;b&gt;', '&lt;/b&gt;'), false;

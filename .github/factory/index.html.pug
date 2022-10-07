@@ -222,7 +222,7 @@ block content
       |     return this.wrap('&lt;b&gt;', '&lt;/b&gt;'), false; // `this` refers to the `editor`
       | };
     h3 map.fire(command)
-    p Execute command data returned by #[code map.test()] method.
+    p Execute command data returned by #[code map.command()] method.
     pre: code
       | // &hellip;
       | let command = map.command();
@@ -235,7 +235,7 @@ block content
       |     }
       | }
     h3 map.keys
-    p List of key combination with its command that will be returned by #[code map.test()]. Key names follow the #[a(href='https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values' rel='nofollow' target='_blank') #[code KeyboardEvent.prototype.key]] specification.
+    p List of key combination with its command that will be returned by #[code map.command()]. Key names follow the #[a(href='https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values' rel='nofollow' target='_blank') #[code KeyboardEvent.prototype.key]] specification.
     pre: code
       | // Anonymous function
       | map.keys['Control-b'] = function () {
