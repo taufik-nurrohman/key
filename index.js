@@ -2,7 +2,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright © 2022 Taufik Nurrohman <https://github.com/taufik-nurrohman>
+ * Copyright © 2023 Taufik Nurrohman <https://github.com/taufik-nurrohman>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the “Software”), to deal
@@ -24,7 +24,7 @@
  *
  */
 (function (g, f) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = f() : typeof define === 'function' && define.amd ? define(f) : (g = typeof globalThis !== 'undefined' ? globalThis : g || self, g.K = f());
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = f() : typeof define === 'function' && define.amd ? define(f) : (g = typeof globalThis !== 'undefined' ? globalThis : g || self, g.Key = f());
 })(this, (function () {
     'use strict';
     var isArray = function isArray(x) {
@@ -49,11 +49,9 @@
         return Object.keys(x);
     };
 
-    function K(source) {
-        if (source === void 0) {
-            source = {};
-        }
+    function Key(self) {
         var $ = this;
+        var queue = {};
         $.command = function (v) {
             if (isString(v)) {
                 return v === $.toString();
@@ -63,19 +61,19 @@
         };
         $.commands = {};
         $.fire = function (command) {
-            var context = $.source,
+            var self = $.self || $,
                 value,
                 exist;
             if (isFunction(command)) {
-                value = command.call(context);
+                value = command.call(self);
                 exist = true;
             } else if (isString(command) && (command = $.commands[command])) {
-                value = command.call(context);
+                value = command.call(self);
                 exist = true;
             } else if (isArray(command)) {
                 var data = command[1] || [];
                 if (command = $.commands[command[0]]) {
-                    value = command.apply(context, data);
+                    value = command.apply(self, data);
                     exist = true;
                 }
             }
@@ -86,19 +84,18 @@
         $.pull = function (key) {
             $.key = null;
             if (!isSet(key)) {
-                return $.queue = {}, $;
+                return queue = {}, $;
             }
-            return delete $.queue[key], $;
+            return delete queue[key], $;
         };
         $.push = function (key) {
-            return $.queue[$.key = key] = 1, $;
+            return queue[$.key = key] = 1, $;
         };
-        $.queue = {};
-        $.source = source;
+        $.self = self;
         $.toString = function () {
-            return toObjectKeys($.queue).join('-');
+            return toObjectKeys(queue).join('-');
         };
         return $;
     }
-    return K;
+    return Key;
 }));

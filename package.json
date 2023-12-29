@@ -36,7 +36,7 @@
     "url": "git+https://github.com/taufik-nurrohman/key.git"
   },
   "scripts": {
-    "pack": "pack --clean=false --from=.github/factory --js-format=umd --js-name=K --js-top='%(js.license)' --mjs=true --to=."
+    "pack": "pack --clean=false --from=.factory --js-format=umd --js-name=Key --js-top='%(js.license)' --mjs=true --to=."
   },
-  "version": "2.1.2"
+  "version": "3.0.0"
 }

@@ -1,9 +1,10 @@
 import {isArray, isFunction, isSet, isString} from '@taufik-nurrohman/is';
 import {toObjectKeys} from '@taufik-nurrohman/to';
 
-function K(source = {}) {
+export default function Key(self) {
 
     let $ = this;
+    let queue = {};
 
     $.command = v => {
         if (isString(v)) {
@@ -16,18 +17,18 @@ function K(source = {}) {
     $.commands = {};
 
     $.fire = command => {
-        let context = $.source,
+        let self = $.self || $,
             value, exist;
         if (isFunction(command)) {
-            value = command.call(context);
+            value = command.call(self);
             exist = true;
         } else if (isString(command) && (command = $.commands[command])) {
-            value = command.call(context);
+            value = command.call(self);
             exist = true;
         } else if (isArray(command)) {
             let data = command[1] || [];
             if (command = $.commands[command[0]]) {
-                value = command.apply(context, data);
+                value = command.apply(self, data);
                 exist = true;
             }
         }
@@ -41,25 +42,21 @@ function K(source = {}) {
     $.pull = key => {
         $.key = null;
         if (!isSet(key)) {
-            return ($.queue = {}), $;
+            return (queue = {}), $;
         }
-        return (delete $.queue[key]), $;
+        return (delete queue[key]), $;
     };
 
     $.push = key => {
-        return ($.queue[$.key = key] = 1), $;
+        return (queue[$.key = key] = 1), $;
     };
 
-    $.queue = {};
-
-    $.source = source;
+    $.self = self;
 
     $.toString = () => {
-        return toObjectKeys($.queue).join('-');
+        return toObjectKeys(queue).join('-');
     };
 
     return $;
 
 }
-
-export default K;
