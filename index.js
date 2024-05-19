@@ -2,7 +2,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright © 2023 Taufik Nurrohman <https://github.com/taufik-nurrohman>
+ * Copyright © 2024 Taufik Nurrohman <https://github.com/taufik-nurrohman>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the “Software”), to deal
@@ -51,51 +51,59 @@
 
     function Key(self) {
         var $ = this;
-        var queue = {};
-        $.command = function (v) {
-            if (isString(v)) {
-                return v === $.toString();
-            }
-            var command = $.keys[$.toString()];
-            return isSet(command) ? command : false;
-        };
         $.commands = {};
-        $.fire = function (command) {
-            var self = $.self || $,
-                value,
-                exist;
-            if (isFunction(command)) {
-                value = command.call(self);
-                exist = true;
-            } else if (isString(command) && (command = $.commands[command])) {
-                value = command.call(self);
-                exist = true;
-            } else if (isArray(command)) {
-                var data = command[1] || [];
-                if (command = $.commands[command[0]]) {
-                    value = command.apply(self, data);
-                    exist = true;
-                }
-            }
-            return exist ? isSet(value) ? value : true : null;
-        };
         $.key = null;
         $.keys = {};
-        $.pull = function (key) {
-            $.key = null;
-            if (!isSet(key)) {
-                return queue = {}, $;
-            }
-            return delete queue[key], $;
-        };
-        $.push = function (key) {
-            return queue[$.key = key] = 1, $;
-        };
-        $.self = self;
-        $.toString = function () {
-            return toObjectKeys(queue).join('-');
-        };
+        $.queue = {};
+        $.self = self || $;
         return $;
     }
+    var $$ = Key.prototype;
+    $$.command = function (v) {
+        var $ = this;
+        if (isString(v)) {
+            return v === $.toString();
+        }
+        var command = $.keys[$.toString()];
+        return isSet(command) ? command : false;
+    };
+    $$.fire = function (command) {
+        var $ = this;
+        var self = $.self || $,
+            value,
+            exist;
+        if (isFunction(command)) {
+            value = command.call(self);
+            exist = true;
+        } else if (isString(command) && (command = $.commands[command])) {
+            value = command.call(self);
+            exist = true;
+        } else if (isArray(command)) {
+            var data = command[1] || [];
+            if (command = $.commands[command[0]]) {
+                value = command.apply(self, data);
+                exist = true;
+            }
+        }
+        return exist ? isSet(value) ? value : true : null;
+    };
+    $$.pull = function (key) {
+        var $ = this;
+        $.key = null;
+        if (!isSet(key)) {
+            return $.queue = {}, $;
+        }
+        return delete $.queue[key], $;
+    };
+    $$.push = function (key) {
+        var $ = this;
+        return $.queue[$.key = key] = 1, $;
+    };
+    $$.toString = function () {
+        return toObjectKeys(this.queue).join('-');
+    };
+    Object.defineProperty(Key, 'name', {
+        value: 'Key'
+    });
     return Key;
 }));
