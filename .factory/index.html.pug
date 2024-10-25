@@ -1,9 +1,10 @@
 extends _index.pug
 
 block state
-  - const title = 'Key ' + version
-  - const theme = '#000'
   - const scripts = ['index.js']
+  - const styles = ['../layout/index.min.css']
+  - const theme = '#000'
+  - const title = 'Key ' + version
 
 block script
   script
@@ -35,7 +36,7 @@ block script
     | self.addEventListener('blur', e => map.pull());
     | self.addEventListener('input', e => map.pull());
     |
-    | let debounce;
+    | let wait;
     | self.addEventListener('keydown', e => {
     |     map.push(e.key);
     |     let command = map.command();
@@ -45,84 +46,26 @@ block script
     |     if (false === value) {
     |         e.preventDefault();
     |     }
-    |     debounce && clearTimeout(debounce);
-    |     debounce = setTimeout(() => map.pull(), 1000);
+    |     wait && clearTimeout(wait);
+    |     wait = setTimeout(() => map.pull(), 1000);
     | });
     |
     | self.addEventListener('keyup', e => map.pull(e.key));
 
-block style
-  style
-    | * {
-    |   box-sizing: border-box;
-    | }
-    | :root {
-    |   background: #fff;
-    |   border-top: 4px solid;
-    |   color: #000;
-    |   font: normal normal 16px/1.25 serif;
-    | }
-    | a {
-    |   color: #009;
-    |   text-decoration: none;
-    | }
-    | a, code {
-    |   word-wrap: break-word;
-    | }
-    | code {
-    |   font-family: monospace;
-    |   font-size: 80%;
-    | }
-    | footer, header, main, nav {
-    |   margin: 0 auto;
-    |   max-width: 700px;
-    | }
-    | hr {
-    |   border: 0;
-    |   border-top: 1px dashed;
-    |   color: inherit;
-    |   height: 0;
-    | }
-    | pre {
-    |   white-space: pre-wrap;
-    |   word-wrap: break-word;
-    | }
-    | pre code {
-    |   background: #eee;
-    |   display: block;
-    |   padding: 1em;
-    | }
-    | table {
-    |   width: 100%;
-    | }
-    | td, th {
-    |   text-align: left;
-    |   vertical-align: top;
-    | }
-    | [role='alert'] {
-    |   background: #ffa;
-    |   border: 1px dashed;
-    |   margin-top: 0;
-    |   padding: 0.75em 1em;
-    |   text-align: center;
-    | }
-
 block content
   p(role='alert') Do you like this project? Please support my #[a(href='https://github.com/mecha-cms') Mecha CMS] project too. Thank you!
   header
-    h1= title
-    p Micro JavaScript #[em hotkey]/#[em keymap] system.
-    hr
+    hgroup
+      h1= title
+      p Micro JavaScript #[em hot-key]/#[em key-map] system.
   main
     p
       input#in(type='text')
     p
       span#out Type something&hellip;
-    h2 Features
-    ul
-      li Light-weight, no dependencies.
-      li Simple #[abbr(title='Application Programming Interface') API]. Easy to master.
-    h2 Usage
+    h2#usage
+      a(href='#usage') #
+      = ' Usage'
     h3 Browser
     pre: code
       | &lt;!DOCTYPE html&gt;
@@ -140,12 +83,12 @@ block content
       |       const self = document.querySelector('textarea');
       |       self.addEventListener('blur', e =&gt; map.pull()); // Reset!
       |       self.addEventListener('input', e =&gt; map.pull()); // Reset!
-      |       let debounce;
+      |       let wait;
       |       self.addEventListener('keydown', e =&gt; {
       |           map.push(e.key);
       |           console.log(map.toString());
-      |           debounce && clearTimeout(debounce);
-      |           debounce = setTimeout(() => map.pull(), 1000); // Reset after 1 second idle!
+      |           wait && clearTimeout(wait);
+      |           wait = setTimeout(() => map.pull(), 1000); // Reset after 1 second idle!
       |       });
       |       self.addEventListener('keyup', e =&gt; map.pull(e.key));
       |     &lt;/script&gt;
@@ -163,24 +106,27 @@ block content
       | import Key from '@taufik-nurrohman/key';
       |
       | const map = new Key;
-    h2 Examples
+    h2#tweaks
+      a(href='#tweaks') #
+      = ' Tweaks'
     ul
       li: a(href='tweak/sequence.html') Sequential Keys
-    h2 Settings
-    pre: code
-      | const map = new Key(self);
-    table(border='1')
-      thead
-        tr
-          th Name
-          th Description
-      tbody
-        tr
-          td: code self
-          td The object that will becomes the #[code this] context in the command.
-    h2 Methods and Properties
-    h3 map.command()
-    p Test if current key combination exists.
+    h2#constructor
+      a(href='#constructor') #
+      = ' Constructor'
+    pre: code const map = new Key(self);
+    h2#parameters
+      a(href='#parameters') #
+      = ' Parameters'
+    h3: code self
+    p The object that will becomes the #[code this] context in the command.
+    h2#methods
+      a(href='#methods') #
+      = ' Methods'
+    h3 Instance Methods
+    p Instance methods are methods available through the results of a #[code Key] construct.
+    h4: code map.command()
+    p Checks if current key combination exists.
     pre: code
       | self.addEventListener('keydown', e => {
       |     map.push(e.key);
@@ -189,7 +135,7 @@ block content
       |         console.log(command);
       |     }
       | });
-    p Test if current key combination is #[code Control-b].
+    p Checks if current key combination is #[code Control-b].
     pre: code
       | self.addEventListener('keydown', e => {
       |     map.push(e.key);
@@ -197,8 +143,54 @@ block content
       |         console.log('Bold!');
       |     }
       | });
-    h3 map.commands
-    p List of commands to be executed on key combination match.
+    p Example context usage, using #[a(href='../text-editor') @taufik-nurrohman/text-editor] application:
+    pre: code
+      | import Key from '@taufik-nurrohman/key';
+      | import TextEditor from '@taufik-nurrohman/text-editor';
+      |
+      | const editor = new TextEditor(document.querySelector('textarea'));
+      | const map = new Key(editor);
+      |
+      | map.commands.bold = function () {
+      |     return this.wrap('&lt;b&gt;', '&lt;/b&gt;'), false; // `this` refers to the `editor`
+      | };
+    h4: code map.fire(command)
+    p Executes command data returned by #[code map.command()] method.
+    pre: code
+      | // &hellip;
+      | let command = map.command();
+      | if (command) {
+      |     let value = map.fire(command);
+      |     if (false === value) {
+      |         e.preventDefault();
+      |     } else if (null === value) {
+      |         console.error('Unknown command:', command);
+      |     }
+      | }
+    h4: code map.pull(key)
+    p Removes key from the queue.
+    pre: code
+      | self.addEventListener('blur', e => map.pull());
+      | self.addEventListener('input', e => map.pull());
+      | self.addEventListener('keyup', e => map.pull(e.key));
+    h4: code map.push(key)
+    p Adds key to the queue.
+    pre: code
+      | self.addEventListener('keydown', e => map.push(e.key));
+    h4: code map.toString()
+    p Returns the current key combination.
+    pre: code
+      | self.addEventListener('keydown', e => {
+      |     map.push(e.key);
+      |     console.info(map + "");
+      | });
+    h2#properties
+     a(href='#properties') #
+     = ' Properties'
+    h3 Instance Properties
+    p Instance properties are properties available through the results of a #[code Key] construct.
+    h4: code map.commands
+    p Returns list of commands to be executed on key combination match.
     pre: code
       | // Simple function
       | map.commands.bold = function () {
@@ -211,32 +203,8 @@ block content
       |     // Your `insertLink` function goes here&hellip;
       |     // Return `void` will be normalized into `true` by `map.fire()` method.
       | };
-    p Example context usage, using #[a(href='../text-editor') @taufik-nurrohman/text-editor]:
-    pre: code
-      | import Key from '@taufik-nurrohman/key';
-      | import TextEditor from '@taufik-nurrohman/text-editor';
-      |
-      | const editor = new TextEditor(document.querySelector('textarea'));
-      | const map = new Key(editor);
-      |
-      | map.commands.bold = function () {
-      |     return this.wrap('&lt;b&gt;', '&lt;/b&gt;'), false; // `this` refers to the `editor`
-      | };
-    h3 map.fire(command)
-    p Execute command data returned by #[code map.command()] method.
-    pre: code
-      | // &hellip;
-      | let command = map.command();
-      | if (command) {
-      |     let value = map.fire(command);
-      |     if (false === value) {
-      |         e.preventDefault();
-      |     } else if (null === value) {
-      |         console.error('Unknown command:', command);
-      |     }
-      | }
-    h3 map.keys
-    p List of key combination with its command that will be returned by #[code map.command()]. Key names follow the #[a(href='https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values' rel='nofollow' target='_blank') #[code KeyboardEvent.prototype.key]] specification.
+    h4: code map.keys
+    p Returns list of key combination with its command that will be returned by #[code map.command()]. Key names follow the #[a(href='https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values' rel='nofollow' target='_blank') #[code KeyboardEvent.prototype.key]] specification.
     pre: code
       | // Anonymous function
       | map.keys['Control-b'] = function () {
@@ -248,23 +216,6 @@ block content
       |
       | // Named function with argument(s)
       | map.keys['Control-k'] = ['insertLink', ['http://']]; // This will execute `map.commands.insertLink` command if available
-    h3 map.pull(key)
-    p Remove key from the queue.
-    pre: code
-      | self.addEventListener('blur', e => map.pull());
-      | self.addEventListener('input', e => map.pull());
-      | self.addEventListener('keyup', e => map.pull(e.key));
-    h3 map.push(key)
-    p Add key to the queue.
-    pre: code
-      | self.addEventListener('keydown', e => map.push(e.key));
-    h3 map.toString()
-    p Return the current key combination.
-    pre: code
-      | self.addEventListener('keydown', e => {
-      |     map.push(e.key);
-      |     console.info(map + "");
-      | });
     h2 License
     p Use it for free, pay if you get paid. So, you&rsquo;ve just benefited financially after using this project? It&rsquo;s a good idea to #[a(href='https://paypal.me/tatautaufik' target='_blank') share a little financial support] with this open source project too. Your support will motivate me to do any further development, as well as to provide voluntary support to overcome problems related to this project.
     p Thank you! ❤️

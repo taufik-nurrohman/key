@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta content="width=device-width" name="viewport">
-    <meta content="Micro JavaScript hotkey/keymap system." name="description">
+    <meta content="Micro JavaScript hot-key/key-map system." name="description">
     <title>Key</title>
   </head>
   <body>
@@ -14,44 +14,44 @@
     <script>
       const map = new Key(window);
       let waitingForTheNextCommand = false;
-      map.commands.reset = function() {
+      map.commands.reset = function () {
           waitingForTheNextCommand = false;
           return false;
       };
-      map.commands.window = function() {
+      map.commands.window = function () {
           console.info('Waiting for the next command…');
           waitingForTheNextCommand = 'window';
           return false; // Trigger `e.preventDefault()`
       };
-      map.commands.windowDown = function() {
+      map.commands.windowDown = function () {
           if ('window' === waitingForTheNextCommand) {
               alert('Down window!');
               waitingForTheNextCommand = false;
               return false;
           }
       };
-      map.commands.windowLeft = function() {
+      map.commands.windowLeft = function () {
           if ('window' === waitingForTheNextCommand) {
               alert('Left window!');
               waitingForTheNextCommand = false;
               return false;
           }
       };
-      map.commands.windowNext = function() {
+      map.commands.windowNext = function () {
           if ('window' === waitingForTheNextCommand) {
               alert('Next window!');
               waitingForTheNextCommand = false;
               return false;
           }
       };
-      map.commands.windowRight = function() {
+      map.commands.windowRight = function () {
           if ('window' === waitingForTheNextCommand) {
               alert('Right window!');
               waitingForTheNextCommand = false;
               return false;
           }
       };
-      map.commands.windowUp = function() {
+      map.commands.windowUp = function () {
           if ('window' === waitingForTheNextCommand) {
               alert('Up window!');
               waitingForTheNextCommand = false;
@@ -71,7 +71,7 @@
       map.keys['w'] = 'windowNext';
       window.addEventListener('blur', e => map.pull());
       window.addEventListener('input', e => map.pull());
-      let debounce;
+      let wait;
       window.addEventListener('keydown', e => {
           map.push(e.key);
           let command = map.command();
@@ -87,8 +87,8 @@
               waitingForTheNextCommand = false;
               console.info('Current key:', e.key);
           }
-          debounce && clearTimeout(debounce);
-          debounce = setTimeout(() => map.pull(), 1000);
+          wait && clearTimeout(wait);
+          wait = setTimeout(() => map.pull(), 1000);
       });
       window.addEventListener('keyup', e => map.pull(e.key));
     </script>

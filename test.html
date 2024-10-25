@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta content="width=device-width" name="viewport">
-    <meta content="Micro JavaScript hotkey/keymap system." name="description">
+    <meta content="Micro JavaScript hot-key/key-map system." name="description">
     <title>Key</title>
   </head>
   <body>
@@ -14,7 +14,7 @@
     <script>
       const source = document.querySelector('textarea');
       const map = new K(source);
-      map.commands.bold = function() {
+      map.commands.bold = function () {
           console.info('Bold command goes here…');
           return false; // Trigger `e.preventDefault()`
       };

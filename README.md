@@ -1,6 +1,6 @@
 Key
 ===
 
-> Micro JavaScript _hotkey_/_keymap_ system.
+Micro JavaScript _hot-key_/_key-map_ system.
 
 [Demo and Documentation](https://taufik-nurrohman.github.io/key)

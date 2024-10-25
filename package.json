@@ -5,7 +5,7 @@
     "@taufik-nurrohman/is": "*",
     "@taufik-nurrohman/to": "*"
   },
-  "description": "Micro JavaScript hotkey/keymap system.",
+  "description": "Micro JavaScript hot-key/key-map system.",
   "devDependencies": {
     "@taufik-nurrohman/factory": "*"
   },
@@ -20,11 +20,13 @@
   "homepage": "https://taufik-nurrohman.js.org",
   "keywords": [
     "command",
+    "hot",
     "hotkey",
     "key",
     "keybinding",
     "keyboard",
     "keymap",
+    "map",
     "shortcut",
     "utility"
   ],
@@ -38,5 +40,5 @@
   "scripts": {
     "pack": "pack --clean=false --from=.factory --js-format=umd --js-name=Key --js-top='%(js.license)' --mjs=true --to=."
   },
-  "version": "3.0.1"
+  "version": "3.0.2"
 }
