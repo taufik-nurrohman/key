@@ -40,5 +40,5 @@
   "scripts": {
     "pack": "pack --clean=false --from=.factory --js-format=umd --js-name=Key --js-top='%(js.license)' --mjs=true --to=."
   },
-  "version": "3.0.2"
+  "version": "3.0.3"
 }
