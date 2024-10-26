@@ -2,8 +2,7 @@
   "author": "Taufik Nurrohman",
   "bugs": "https://github.com/taufik-nurrohman/key/issues",
   "dependencies": {
-    "@taufik-nurrohman/is": "*",
-    "@taufik-nurrohman/to": "*"
+    "@taufik-nurrohman/is": "*"
   },
   "description": "Micro JavaScript hot-key/key-map system.",
   "devDependencies": {
@@ -40,5 +39,5 @@
   "scripts": {
     "pack": "pack --clean=false --from=.factory --js-format=umd --js-name=Key --js-top='%(js.license)' --mjs=true --to=."
   },
-  "version": "3.0.3"
+  "version": "3.0.4"
 }

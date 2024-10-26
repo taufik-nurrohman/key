@@ -1,5 +1,4 @@
 import {isArray, isFunction, isSet, isString} from '@taufik-nurrohman/is';
-import {toObjectKeys} from '@taufik-nurrohman/to';
 
 function Key(self) {
 
@@ -8,8 +7,8 @@ function Key(self) {
     $.commands = {};
     $.key = null;
     $.keys = {};
-    $.queue = {};
     $.self = self || $;
+    $.set = new Set;
 
     return $;
 
@@ -50,18 +49,22 @@ $$.pull = function (key) {
     let $ = this;
     $.key = null;
     if (!isSet(key)) {
-        return ($.queue = {}), $;
+        return ($.set = new Set), $;
     }
-    return (delete $.queue[key]), $;
+    return $.set.delete(key), $;
 };
 
 $$.push = function (key) {
     let $ = this;
-    return ($.queue[$.key = key] = 1), $;
+    return $.set.add($.key = key, 1), $;
+};
+
+$$.toArray = function () {
+    return Array.from(this.set);
 };
 
 $$.toString = function () {
-    return toObjectKeys(this.queue).join('-');
+    return this.toArray().join('-');
 };
 
 Object.defineProperty(Key, 'name', {

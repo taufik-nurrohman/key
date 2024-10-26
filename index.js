@@ -45,17 +45,14 @@
     var isString = function isString(x) {
         return 'string' === typeof x;
     };
-    var toObjectKeys = function toObjectKeys(x) {
-        return Object.keys(x);
-    };
 
     function Key(self) {
         var $ = this;
         $.commands = {};
         $.key = null;
         $.keys = {};
-        $.queue = {};
         $.self = self || $;
+        $.set = new Set();
         return $;
     }
     var $$ = Key.prototype;
@@ -91,16 +88,19 @@
         var $ = this;
         $.key = null;
         if (!isSet(key)) {
-            return $.queue = {}, $;
+            return $.set = new Set(), $;
         }
-        return delete $.queue[key], $;
+        return $.set.delete(key), $;
     };
     $$.push = function (key) {
         var $ = this;
-        return $.queue[$.key = key] = 1, $;
+        return $.set.add($.key = key, 1), $;
+    };
+    $$.toArray = function () {
+        return Array.from(this.set);
     };
     $$.toString = function () {
-        return toObjectKeys(this.queue).join('-');
+        return this.toArray().join('-');
     };
     Object.defineProperty(Key, 'name', {
         value: 'Key'

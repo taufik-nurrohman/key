@@ -73,6 +73,9 @@
       window.addEventListener('input', e => map.pull());
       let wait;
       window.addEventListener('keydown', e => {
+          e.altKey && map.push('Alt');
+          e.ctrlKey && map.push('Control');
+          e.shiftKey && map.push('Shift');
           map.push(e.key);
           let command = map.command();
           if (command) {

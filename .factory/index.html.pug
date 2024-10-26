@@ -38,6 +38,9 @@ block script
     |
     | let wait;
     | self.addEventListener('keydown', e => {
+    |     e.altKey && map.push('Alt');
+    |     e.ctrlKey && map.push('Control');
+    |     e.shiftKey && map.push('Shift');
     |     map.push(e.key);
     |     let command = map.command();
     |     let value = map.fire(command);
@@ -93,6 +96,11 @@ block content
       |       self.addEventListener('input', e =&gt; map.pull()); // Reset!
       |       let wait;
       |       self.addEventListener('keydown', e =&gt; {
+      |           // Make the `Alt`, `Control`, and `Shift` keys sticky (does not require the user to release all keys first to repeat or change the current key combination).
+      |           e.altKey && map.push('Alt');
+      |           e.ctrlKey && map.push('Control');
+      |           e.shiftKey && map.push('Shift');
+      |           // Add the actual key to the queue. Don’t worry, this will not mistakenly add a key that already exists in the queue.
       |           map.push(e.key);
       |           console.log(map.toString());
       |           wait && clearTimeout(wait);
@@ -185,12 +193,20 @@ block content
     p Adds key to the queue.
     pre: code
       | self.addEventListener('keydown', e => map.push(e.key));
+    h4: code map.toArray()
+    p Returns the current key combination as array.
+    pre: code
+      | self.addEventListener('keydown', e => {
+      |     map.push(e.key);
+      |     console.info(map.toArray());
+      | });
     h4: code map.toString()
-    p Returns the current key combination.
+    p Returns the current key combination as string.
     pre: code
       | self.addEventListener('keydown', e => {
       |     map.push(e.key);
       |     console.info(map + "");
+      |     console.info(map.toString());
       | });
     h2#properties
      a(href='#properties') #
