@@ -1,13 +1,13 @@
 extends _index.pug
 
 block state
-  - const title = 'Key'
   - const scripts = ['index.min.js']
+  - const title = 'Key'
 
 block script
   script
-    | const source = document.querySelector('textarea');
-    | const map = new K(source);
+    | const self = document.querySelector('textarea');
+    | const map = new Key(self);
     |
     | map.commands.bold = function () {
     |     console.info('Bold command goes here…');
@@ -16,12 +16,12 @@ block script
     |
     | map.keys['Control-b'] = 'bold';
     |
-    | source.addEventListener('blur', e => map.pull());
-    | source.addEventListener('input', e => map.pull());
+    | self.addEventListener('blur', e => map.pull());
+    | self.addEventListener('input', e => e.data && map.pull(e.data));
     |
-    | let debounce;
-    | source.addEventListener('keydown', e => {
-    |     map.push(e.key);
+    | let wait;
+    | self.addEventListener('keydown', e => {
+    |     e.key && map.push(e.key);
     |     let command = map.command();
     |     if (command) {
     |         let value = map.fire(command);
@@ -33,11 +33,11 @@ block script
     |     } else {
     |         console.info('Current key:', e.key);
     |     }
-    |     debounce && clearTimeout(debounce);
-    |     debounce = setTimeout(() => map.pull(), 1000);
+    |     wait && clearTimeout(wait);
+    |     wait = setTimeout(() => map.pull(), 1000);
     | });
     |
-    | source.addEventListener('keyup', e => map.pull(e.key));
+    | self.addEventListener('keyup', e => e.key && map.pull(e.key));
 
 block content
   main
