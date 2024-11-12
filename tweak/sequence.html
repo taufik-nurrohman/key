@@ -73,10 +73,10 @@
       window.addEventListener('input', e => map.pull());
       let wait;
       window.addEventListener('keydown', e => {
-          e.altKey && map.push('Alt');
-          e.ctrlKey && map.push('Control');
-          e.shiftKey && map.push('Shift');
-          map.push(e.key);
+          map[e.altKey ? 'push' : 'pull']('Alt');
+          map[e.ctrlKey ? 'push' : 'pull']('Control');
+          map[e.shiftKey ? 'push' : 'pull']('Shift');
+          e.key && map.push(e.key);
           let command = map.command();
           if (command) {
               let value = map.fire(command);
@@ -93,7 +93,7 @@
           wait && clearTimeout(wait);
           wait = setTimeout(() => map.pull(), 1000);
       });
-      window.addEventListener('keyup', e => map.pull(e.key));
+      window.addEventListener('keyup', e => e.key && map.pull(e.key));
     </script>
   </body>
 </html>

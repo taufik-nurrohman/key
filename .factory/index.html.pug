@@ -33,15 +33,17 @@ block script
     | map.keys['Control-v'] = function () {};
     | map.keys['Control-x'] = function () {};
     |
-    | self.addEventListener('blur', e => map.pull());
-    | self.addEventListener('input', e => map.pull());
-    |
     | let wait;
-    | self.addEventListener('keydown', e => {
-    |     e.altKey && map.push('Alt');
-    |     e.ctrlKey && map.push('Control');
-    |     e.shiftKey && map.push('Shift');
-    |     map.push(e.key);
+    |
+    | const onBeforeInputOrKeyDown = function (e) {
+    |     if ('keydown' === e.type) {
+    |         map[e.altKey ? 'push' : 'pull']('Alt');
+    |         map[e.ctrlKey ? 'push' : 'pull']('Control');
+    |         map[e.shiftKey ? 'push' : 'pull']('Shift');
+    |         e.key && map.push(e.key);
+    |     } else {
+    |         e.data && map.push(e.data);
+    |     }
     |     let command = map.command();
     |     let value = map.fire(command);
     |     test.style.color = null !== value ? '#090' : '#900';
@@ -51,9 +53,22 @@ block script
     |     }
     |     wait && clearTimeout(wait);
     |     wait = setTimeout(() => map.pull(), 1000);
-    | });
+    | };
     |
-    | self.addEventListener('keyup', e => map.pull(e.key));
+    | const onBlur = function (e) {
+    |     map.pull();
+    | };
+    |
+    | const onInputOrKeyUp = function (e) {
+    |     const key = 'keyup' === e.type ? e.key : e.data;
+    |     key && map.pull(key);
+    | };
+    |
+    | self.addEventListener('beforeinput', onBeforeInputOrKeyDown, false);
+    | self.addEventListener('blur', onBlur, false);
+    | self.addEventListener('input', onInputOrKeyUp, false);
+    | self.addEventListener('keydown', onBeforeInputOrKeyDown, false);
+    | self.addEventListener('keyup', onInputOrKeyUp, false);
 
 block style
   style
@@ -71,9 +86,9 @@ block content
       p Micro JavaScript #[em hot-key]/#[em key-map] system.
   main
     p
-      input#in(type='text')
+      input#in(placeholder!='Type away&hellip;' type='text')
     p
-      span#out Type something&hellip;
+      span#out Result goes here&hellip;
     h2#usage
       a(href='#usage') #
       = ' Usage'
@@ -97,19 +112,21 @@ block content
       |       let wait;
       |       self.addEventListener('keydown', e =&gt; {
       |           // Make the `Alt`, `Control`, and `Shift` keys sticky (does not require the user to release all keys first to repeat or change the current key combination).
-      |           e.altKey && map.push('Alt');
-      |           e.ctrlKey && map.push('Control');
-      |           e.shiftKey && map.push('Shift');
+      |           map[e.altKey ? 'push' : 'pull']('Alt');
+      |           map[e.ctrlKey ? 'push' : 'pull']('Control');
+      |           map[e.shiftKey ? 'push' : 'pull']('Shift');
       |           // Add the actual key to the queue. Don’t worry, this will not mistakenly add a key that already exists in the queue.
-      |           map.push(e.key);
+      |           e.key && map.push(e.key);
       |           console.log(map.toString());
       |           wait && clearTimeout(wait);
       |           wait = setTimeout(() => map.pull(), 1000); // Reset after 1 second idle!
       |       });
-      |       self.addEventListener('keyup', e =&gt; map.pull(e.key));
+      |       self.addEventListener('keyup', e =&gt; e.key && map.pull(e.key));
       |     &lt;/script&gt;
       |   &lt;/body&gt;
       | &lt;/html&gt;
+    div(role='note')
+      p #[strong Note:] For better compatibility with mobile devices, it is also a good practice to listen to the #[code beforeinput] event to verify the character being typed. Unlike the #[code keydown] event, which has the #[a(href='https://w3c.github.io/uievents#dom-keyboardevent-key' rel='nofollow' target='_blank') #[code KeyboardEvent.key]] property that returns the character of the key pressed before it is inserted into the text area, the #[code beforeinput] (and #[code input]) event has the #[a(href='https://w3c.github.io/uievents#dom-inputevent-data' rel='nofollow' target='_blank') #[code InputEvent.data]] property that also returns the character of the key pressed.
     h3 Node.js
     p Functions and methods in this application are mostly native JavaScript and are intended for use by the browser. Node.js doesn&rsquo;t know about the DOM, so this kind of practice will probably be used more often to build new browser packages than to be used directly in the Node.js server.
     h4 CommonJS
@@ -145,7 +162,16 @@ block content
     p Checks if current key combination exists.
     pre: code
       | self.addEventListener('keydown', e => {
-      |     map.push(e.key);
+      |     e.key && map.push(e.key);
+      |     let command = map.command();
+      |     if (command) {
+      |         console.log(command);
+      |     }
+      | });
+    pre: code
+      | // Mobile
+      | self.addEventListener('beforeinput', e => {
+      |     e.data && map.push(e.data);
       |     let command = map.command();
       |     if (command) {
       |         console.log(command);
@@ -154,7 +180,15 @@ block content
     p Checks if current key combination is #[code Control-b].
     pre: code
       | self.addEventListener('keydown', e => {
-      |     map.push(e.key);
+      |     e.key && map.push(e.key);
+      |     if (map.command('Control-b')) {
+      |         console.log('Bold!');
+      |     }
+      | });
+    pre: code
+      | // Mobile
+      | self.addEventListener('beforeinput', e => {
+      |     e.data && map.push(e.data);
       |     if (map.command('Control-b')) {
       |         console.log('Bold!');
       |     }
@@ -187,24 +221,40 @@ block content
     p Removes key from the queue.
     pre: code
       | self.addEventListener('blur', e => map.pull());
-      | self.addEventListener('input', e => map.pull());
-      | self.addEventListener('keyup', e => map.pull(e.key));
+      | self.addEventListener('input', e => e.data && map.pull(e.data));
+      | self.addEventListener('keyup', e => e.key && map.pull(e.key));
     h4: code map.push(key)
     p Adds key to the queue.
     pre: code
-      | self.addEventListener('keydown', e => map.push(e.key));
+      | self.addEventListener('keydown', e => e.key && map.push(e.key));
+    pre: code
+      | // Mobile
+      | self.addEventListener('beforeinput', e => e.data && map.push(e.data));
     h4: code map.toArray()
     p Returns the current key combination as array.
     pre: code
       | self.addEventListener('keydown', e => {
-      |     map.push(e.key);
+      |     e.key && map.push(e.key);
+      |     console.info(map.toArray());
+      | });
+    pre: code
+      | // Mobile
+      | self.addEventListener('beforeinput', e => {
+      |     e.data && map.push(e.data);
       |     console.info(map.toArray());
       | });
     h4: code map.toString()
     p Returns the current key combination as string.
     pre: code
       | self.addEventListener('keydown', e => {
-      |     map.push(e.key);
+      |     e.key && map.push(e.key);
+      |     console.info(map + "");
+      |     console.info(map.toString());
+      | });
+    pre: code
+      | // Mobile
+      | self.addEventListener('beforeinput', e => {
+      |     e.data && map.push(e.data);
       |     console.info(map + "");
       |     console.info(map.toString());
       | });
@@ -228,7 +278,7 @@ block content
       |     // Return `void` will be normalized into `true` by `map.fire()` method.
       | };
     h4: code map.keys
-    p Returns list of key combination with its command that will be returned by #[code map.command()]. Key names follow the #[a(href='https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values' rel='nofollow' target='_blank') #[code KeyboardEvent.prototype.key]] specification.
+    p Returns list of key combination with its command that will be returned by #[code map.command()]. Key names follow the #[a(href='https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values' rel='nofollow' target='_blank') #[code KeyboardEvent.key]] specification.
     pre: code
       | // Anonymous function
       | map.keys['Control-b'] = function () {

@@ -5,7 +5,7 @@
     <meta content="#000" name="theme-color">
     <meta content="width=device-width" name="viewport">
     <meta content="Micro JavaScript hot-key/key-map system." name="description">
-    <title>Key 3.0.4</title>
+    <title>Key 3.0.5</title>
     <link href="../layout/index.min.css" rel="stylesheet">
     <style>
       body {
@@ -19,13 +19,13 @@
     <p role="alert">Do you like this project? Please support my <a href="https://github.com/mecha-cms">Mecha CMS</a> project too. Thank you!</p>
     <header>
       <hgroup>
-        <h1>Key 3.0.4</h1>
+        <h1>Key 3.0.5</h1>
         <p>Micro JavaScript <em>hot-key</em>/<em>key-map</em> system.</p>
       </hgroup>
     </header>
     <main>
-      <p><input id="in" type="text"></p>
-      <p><span id="out">Type something&hellip;</span></p>
+      <p><input id="in" placeholder="Type away&hellip;" type="text"></p>
+      <p><span id="out">Result goes here&hellip;</span></p>
       <h2 id="usage"><a href="#usage">#</a> Usage</h2>
       <h3>Browser</h3>
       <pre><code>&lt;!DOCTYPE html&gt;
@@ -46,19 +46,22 @@
       let wait;
       self.addEventListener('keydown', e =&gt; {
           // Make the `Alt`, `Control`, and `Shift` keys sticky (does not require the user to release all keys first to repeat or change the current key combination).
-          e.altKey && map.push('Alt');
-          e.ctrlKey && map.push('Control');
-          e.shiftKey && map.push('Shift');
+          map[e.altKey ? 'push' : 'pull']('Alt');
+          map[e.ctrlKey ? 'push' : 'pull']('Control');
+          map[e.shiftKey ? 'push' : 'pull']('Shift');
           // Add the actual key to the queue. Don’t worry, this will not mistakenly add a key that already exists in the queue.
-          map.push(e.key);
+          e.key && map.push(e.key);
           console.log(map.toString());
           wait && clearTimeout(wait);
           wait = setTimeout(() => map.pull(), 1000); // Reset after 1 second idle!
       });
-      self.addEventListener('keyup', e =&gt; map.pull(e.key));
+      self.addEventListener('keyup', e =&gt; e.key && map.pull(e.key));
     &lt;/script&gt;
   &lt;/body&gt;
 &lt;/html&gt;</code></pre>
+      <div role="note">
+        <p><strong>Note:</strong> For better compatibility with mobile devices, it is also a good practice to listen to the <code>beforeinput</code> event to verify the character being typed. Unlike the <code>keydown</code> event, which has the <a href="https://w3c.github.io/uievents#dom-keyboardevent-key" rel="nofollow" target="_blank"><code>KeyboardEvent.key</code></a> property that returns the character of the key pressed before it is inserted into the text area, the <code>beforeinput</code> (and <code>input</code>) event has the <a href="https://w3c.github.io/uievents#dom-inputevent-data" rel="nofollow" target="_blank"><code>InputEvent.data</code></a> property that also returns the character of the key pressed.</p>
+      </div>
       <h3>Node.js</h3>
       <p>Functions and methods in this application are mostly native JavaScript and are intended for use by the browser. Node.js doesn&rsquo;t know about the DOM, so this kind of practice will probably be used more often to build new browser packages than to be used directly in the Node.js server.</p>
       <h4>CommonJS</h4>
@@ -84,7 +87,15 @@ const map = new Key;</code></pre>
       <h4><code>map.command()</code></h4>
       <p>Checks if current key combination exists.</p>
       <pre><code>self.addEventListener('keydown', e => {
-    map.push(e.key);
+    e.key && map.push(e.key);
+    let command = map.command();
+    if (command) {
+        console.log(command);
+    }
+});</code></pre>
+      <pre><code>// Mobile
+self.addEventListener('beforeinput', e => {
+    e.data && map.push(e.data);
     let command = map.command();
     if (command) {
         console.log(command);
@@ -92,7 +103,14 @@ const map = new Key;</code></pre>
 });</code></pre>
       <p>Checks if current key combination is <code>Control-b</code>.</p>
       <pre><code>self.addEventListener('keydown', e => {
-    map.push(e.key);
+    e.key && map.push(e.key);
+    if (map.command('Control-b')) {
+        console.log('Bold!');
+    }
+});</code></pre>
+      <pre><code>// Mobile
+self.addEventListener('beforeinput', e => {
+    e.data && map.push(e.data);
     if (map.command('Control-b')) {
         console.log('Bold!');
     }
@@ -122,21 +140,34 @@ if (command) {
       <h4><code>map.pull(key)</code></h4>
       <p>Removes key from the queue.</p>
       <pre><code>self.addEventListener('blur', e => map.pull());
-self.addEventListener('input', e => map.pull());
-self.addEventListener('keyup', e => map.pull(e.key));</code></pre>
+self.addEventListener('input', e => e.data && map.pull(e.data));
+self.addEventListener('keyup', e => e.key && map.pull(e.key));</code></pre>
       <h4><code>map.push(key)</code></h4>
       <p>Adds key to the queue.</p>
-      <pre><code>self.addEventListener('keydown', e => map.push(e.key));</code></pre>
+      <pre><code>self.addEventListener('keydown', e => e.key && map.push(e.key));</code></pre>
+      <pre><code>// Mobile
+self.addEventListener('beforeinput', e => e.data && map.push(e.data));</code></pre>
       <h4><code>map.toArray()</code></h4>
       <p>Returns the current key combination as array.</p>
       <pre><code>self.addEventListener('keydown', e => {
-    map.push(e.key);
+    e.key && map.push(e.key);
+    console.info(map.toArray());
+});</code></pre>
+      <pre><code>// Mobile
+self.addEventListener('beforeinput', e => {
+    e.data && map.push(e.data);
     console.info(map.toArray());
 });</code></pre>
       <h4><code>map.toString()</code></h4>
       <p>Returns the current key combination as string.</p>
       <pre><code>self.addEventListener('keydown', e => {
-    map.push(e.key);
+    e.key && map.push(e.key);
+    console.info(map + "");
+    console.info(map.toString());
+});</code></pre>
+      <pre><code>// Mobile
+self.addEventListener('beforeinput', e => {
+    e.data && map.push(e.data);
     console.info(map + "");
     console.info(map.toString());
 });</code></pre>
@@ -157,7 +188,7 @@ map.commands.insertLink = function (href = 'http://') {
     // Return `void` will be normalized into `true` by `map.fire()` method.
 };</code></pre>
       <h4><code>map.keys</code></h4>
-      <p>Returns list of key combination with its command that will be returned by <code>map.command()</code>. Key names follow the <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values" rel="nofollow" target="_blank"><code>KeyboardEvent.prototype.key</code></a> specification.</p>
+      <p>Returns list of key combination with its command that will be returned by <code>map.command()</code>. Key names follow the <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values" rel="nofollow" target="_blank"><code>KeyboardEvent.key</code></a> specification.</p>
       <pre><code>// Anonymous function
 map.keys['Control-b'] = function () {
     return this.wrap('&lt;b&gt;', '&lt;/b&gt;'), false;
@@ -199,14 +230,16 @@ map.keys['Control-k'] = ['insertLink', ['http://']]; // This will execute `map.c
       map.keys['Control-k'] = ['insertLink', ['http://']];
       map.keys['Control-v'] = function () {};
       map.keys['Control-x'] = function () {};
-      self.addEventListener('blur', e => map.pull());
-      self.addEventListener('input', e => map.pull());
       let wait;
-      self.addEventListener('keydown', e => {
-          e.altKey && map.push('Alt');
-          e.ctrlKey && map.push('Control');
-          e.shiftKey && map.push('Shift');
-          map.push(e.key);
+      const onBeforeInputOrKeyDown = function (e) {
+          if ('keydown' === e.type) {
+              map[e.altKey ? 'push' : 'pull']('Alt');
+              map[e.ctrlKey ? 'push' : 'pull']('Control');
+              map[e.shiftKey ? 'push' : 'pull']('Shift');
+              e.key && map.push(e.key);
+          } else {
+              e.data && map.push(e.data);
+          }
           let command = map.command();
           let value = map.fire(command);
           test.style.color = null !== value ? '#090' : '#900';
@@ -216,8 +249,19 @@ map.keys['Control-k'] = ['insertLink', ['http://']]; // This will execute `map.c
           }
           wait && clearTimeout(wait);
           wait = setTimeout(() => map.pull(), 1000);
-      });
-      self.addEventListener('keyup', e => map.pull(e.key));
+      };
+      const onBlur = function (e) {
+          map.pull();
+      };
+      const onInputOrKeyUp = function (e) {
+          const key = 'keyup' === e.type ? e.key : e.data;
+          key && map.pull(key);
+      };
+      self.addEventListener('beforeinput', onBeforeInputOrKeyDown, false);
+      self.addEventListener('blur', onBlur, false);
+      self.addEventListener('input', onInputOrKeyUp, false);
+      self.addEventListener('keydown', onBeforeInputOrKeyDown, false);
+      self.addEventListener('keyup', onInputOrKeyUp, false);
     </script>
   </body>
 </html>
