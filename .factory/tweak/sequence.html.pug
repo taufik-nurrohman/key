@@ -80,6 +80,7 @@ block script
     | window.addEventListener('keydown', e => {
     |     map[e.altKey ? 'push' : 'pull']('Alt');
     |     map[e.ctrlKey ? 'push' : 'pull']('Control');
+    |     map[e.metaKey ? 'push' : 'pull']('Meta');
     |     map[e.shiftKey ? 'push' : 'pull']('Shift');
     |     e.key && map.push(e.key);
     |     let command = map.command();

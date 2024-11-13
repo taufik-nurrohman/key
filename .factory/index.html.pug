@@ -39,9 +39,13 @@ block script
     |     if ('keydown' === e.type) {
     |         map[e.altKey ? 'push' : 'pull']('Alt');
     |         map[e.ctrlKey ? 'push' : 'pull']('Control');
+    |         map[e.metaKey ? 'push' : 'pull']('Meta');
     |         map[e.shiftKey ? 'push' : 'pull']('Shift');
     |         e.key && map.push(e.key);
     |     } else {
+    |         if (e.data && e.data.length > 1) {
+    |             console.info('Likely coming from a `paste` event, or an auto-complete feature.');
+    |         }
     |         e.data && map.push(e.data);
     |     }
     |     let command = map.command();
@@ -111,9 +115,10 @@ block content
       |       self.addEventListener('input', e =&gt; map.pull()); // Reset!
       |       let wait;
       |       self.addEventListener('keydown', e =&gt; {
-      |           // Make the `Alt`, `Control`, and `Shift` keys sticky (does not require the user to release all keys first to repeat or change the current key combination).
+      |           // Make the `Alt`, `Control`, `Meta`, and `Shift` keys sticky (does not require the user to release all keys first to repeat or change the current key combination).
       |           map[e.altKey ? 'push' : 'pull']('Alt');
       |           map[e.ctrlKey ? 'push' : 'pull']('Control');
+      |           map[e.metaKey ? 'push' : 'pull']('Meta');
       |           map[e.shiftKey ? 'push' : 'pull']('Shift');
       |           // Add the actual key to the queue. Don’t worry, this will not mistakenly add a key that already exists in the queue.
       |           e.key && map.push(e.key);
@@ -176,6 +181,9 @@ block content
     pre: code
       | // Mobile
       | self.addEventListener('beforeinput', e => {
+      |     if (e.data && e.data.length > 1) {
+      |         console.info('Likely coming from a `paste` event, or an auto-complete feature.');
+      |     }
       |     e.data && map.push(e.data);
       |     let command = map.command();
       |     if (command) {
@@ -193,6 +201,9 @@ block content
     pre: code
       | // Mobile
       | self.addEventListener('beforeinput', e => {
+      |     if (e.data && e.data.length > 1) {
+      |         console.info('Likely coming from a `paste` event, or an auto-complete feature.');
+      |     }
       |     e.data && map.push(e.data);
       |     if (map.command('Control-b')) {
       |         console.log('Bold!');
@@ -209,13 +220,13 @@ block content
       | map.commands.bold = function () {
       |     return this.wrap('&lt;b&gt;', '&lt;/b&gt;'), false; // `this` refers to the `editor`
       | };
-    h4: code map.fire(command)
+    h4: code map.fire(command, data)
     p Executes command data returned by #[code map.command()] method.
     pre: code
       | // &hellip;
       | let command = map.command();
       | if (command) {
-      |     let value = map.fire(command);
+      |     let value = map.fire(command, [e]);
       |     if (false === value) {
       |         e.preventDefault();
       |     } else if (null === value) {

@@ -25,18 +25,21 @@ $$.command = function (v) {
     return isSet(command) ? command : false;
 };
 
-$$.fire = function (command) {
+$$.fire = function (command, data) {
     let $ = this;
     let self = $.self || $,
         value, exist;
+    data = data || [];
     if (isFunction(command)) {
-        value = command.call(self);
+        value = command.apply(self, data);
         exist = true;
     } else if (isString(command) && (command = $.commands[command])) {
-        value = command.call(self);
+        value = command.apply(self, data);
         exist = true;
     } else if (isArray(command)) {
-        let data = command[1] || [];
+        if (isArray(command[1])) {
+            command[1].forEach((v, k) => data[k] = v);
+        }
         if (command = $.commands[command[0]]) {
             value = command.apply(self, data);
             exist = true;

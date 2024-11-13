@@ -5,7 +5,7 @@
     <meta content="#000" name="theme-color">
     <meta content="width=device-width" name="viewport">
     <meta content="Micro JavaScript hot-key/key-map system." name="description">
-    <title>Key 3.0.6</title>
+    <title>Key 3.1.0</title>
     <link href="../layout/index.min.css" rel="stylesheet">
     <style>
       body {
@@ -19,7 +19,7 @@
     <p role="alert">Do you like this project? Please support my <a href="https://github.com/mecha-cms">Mecha CMS</a> project too. Thank you!</p>
     <header>
       <hgroup>
-        <h1>Key 3.0.6</h1>
+        <h1>Key 3.1.0</h1>
         <p>Micro JavaScript <em>hot-key</em>/<em>key-map</em> system.</p>
       </hgroup>
     </header>
@@ -45,9 +45,10 @@
       self.addEventListener('input', e =&gt; map.pull()); // Reset!
       let wait;
       self.addEventListener('keydown', e =&gt; {
-          // Make the `Alt`, `Control`, and `Shift` keys sticky (does not require the user to release all keys first to repeat or change the current key combination).
+          // Make the `Alt`, `Control`, `Meta`, and `Shift` keys sticky (does not require the user to release all keys first to repeat or change the current key combination).
           map[e.altKey ? 'push' : 'pull']('Alt');
           map[e.ctrlKey ? 'push' : 'pull']('Control');
+          map[e.metaKey ? 'push' : 'pull']('Meta');
           map[e.shiftKey ? 'push' : 'pull']('Shift');
           // Add the actual key to the queue. Don’t worry, this will not mistakenly add a key that already exists in the queue.
           e.key && map.push(e.key);
@@ -99,6 +100,9 @@ const map = new Key;</code></pre>
 });</code></pre>
       <pre><code>// Mobile
 self.addEventListener('beforeinput', e => {
+    if (e.data && e.data.length > 1) {
+        console.info('Likely coming from a `paste` event, or an auto-complete feature.');
+    }
     e.data && map.push(e.data);
     let command = map.command();
     if (command) {
@@ -114,6 +118,9 @@ self.addEventListener('beforeinput', e => {
 });</code></pre>
       <pre><code>// Mobile
 self.addEventListener('beforeinput', e => {
+    if (e.data && e.data.length > 1) {
+        console.info('Likely coming from a `paste` event, or an auto-complete feature.');
+    }
     e.data && map.push(e.data);
     if (map.command('Control-b')) {
         console.log('Bold!');
@@ -129,12 +136,12 @@ const map = new Key(editor);
 map.commands.bold = function () {
     return this.wrap('&lt;b&gt;', '&lt;/b&gt;'), false; // `this` refers to the `editor`
 };</code></pre>
-      <h4><code>map.fire(command)</code></h4>
+      <h4><code>map.fire(command, data)</code></h4>
       <p>Executes command data returned by <code>map.command()</code> method.</p>
       <pre><code>// &hellip;
 let command = map.command();
 if (command) {
-    let value = map.fire(command);
+    let value = map.fire(command, [e]);
     if (false === value) {
         e.preventDefault();
     } else if (null === value) {
@@ -239,9 +246,13 @@ map.keys['Control-k'] = ['insertLink', ['http://']]; // This will execute `map.c
           if ('keydown' === e.type) {
               map[e.altKey ? 'push' : 'pull']('Alt');
               map[e.ctrlKey ? 'push' : 'pull']('Control');
+              map[e.metaKey ? 'push' : 'pull']('Meta');
               map[e.shiftKey ? 'push' : 'pull']('Shift');
               e.key && map.push(e.key);
           } else {
+              if (e.data && e.data.length > 1) {
+                  console.info('Likely coming from a `paste` event, or an auto-complete feature.');
+              }
               e.data && map.push(e.data);
           }
           let command = map.command();
