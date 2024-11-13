@@ -79,7 +79,7 @@
         } else if (isArray(command)) {
             if (isArray(command[1])) {
                 command[1].forEach(function (v, k) {
-                    return data[k] = v;
+                    return isSet(v) && (data[k] = v);
                 });
             }
             if (command = $.commands[command[0]]) {

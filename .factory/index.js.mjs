@@ -38,7 +38,7 @@ $$.fire = function (command, data) {
         exist = true;
     } else if (isArray(command)) {
         if (isArray(command[1])) {
-            command[1].forEach((v, k) => data[k] = v);
+            command[1].forEach((v, k) => isSet(v) && (data[k] = v));
         }
         if (command = $.commands[command[0]]) {
             value = command.apply(self, data);
