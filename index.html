@@ -5,7 +5,7 @@
     <meta content="#000" name="theme-color">
     <meta content="width=device-width" name="viewport">
     <meta content="Micro JavaScript hot-key/key-map system." name="description">
-    <title>Key 3.1.2</title>
+    <title>Key 3.1.3</title>
     <link href="../layout/index.min.css" rel="stylesheet">
     <style>
       body {
@@ -19,7 +19,7 @@
     <p role="alert">Do you like this project? Please support my <a href="https://github.com/mecha-cms">Mecha CMS</a> project too. Thank you!</p>
     <header>
       <hgroup>
-        <h1>Key 3.1.2</h1>
+        <h1>Key 3.1.3</h1>
         <p>Micro JavaScript <em>hot-key</em>/<em>key-map</em> system.</p>
       </hgroup>
     </header>
@@ -42,7 +42,6 @@
       const map = new Key;
       const self = document.querySelector('textarea');
       self.addEventListener('blur', e =&gt; map.pull()); // Reset!
-      self.addEventListener('input', e =&gt; map.pull()); // Reset!
       let wait;
       self.addEventListener('keydown', e =&gt; {
           // Make the `Alt`, `Control`, `Meta`, and `Shift` keys sticky (does not require the user to release all keys first to repeat or change the current key combination).
@@ -61,7 +60,7 @@
   &lt;/body&gt;
 &lt;/html&gt;</code></pre>
       <div role="note">
-        <p><strong>Note:</strong> For better compatibility with mobile devices, it is also a good practice to listen to the <code>beforeinput</code> event to verify the character being typed. Unlike the <code>keydown</code> event, which has the <a href="https://w3c.github.io/uievents#dom-keyboardevent-key" rel="nofollow" target="_blank"><code>KeyboardEvent.key</code></a> property that returns the character of the key pressed before it is inserted into the text area, the <code>beforeinput</code> (and <code>input</code>) event has the <a href="https://w3c.github.io/uievents#dom-inputevent-data" rel="nofollow" target="_blank"><code>InputEvent.data</code></a> property that also returns the character of the key pressed.</p>
+        <p><strong>Note:</strong> For better compatibility with mobile devices, it is also a good practice to listen to the <code>beforeinput</code> event to verify the character being typed. Unlike the <code>keydown</code> event, which has the <a href="https://w3c.github.io/uievents#dom-keyboardevent-key" rel="nofollow" target="_blank"><code>KeyboardEvent.key</code></a> property that returns the character of the key pressed before it is inserted into the text area, the <code>beforeinput</code> (and <code>input</code>) event has the <a href="https://w3c.github.io/uievents#dom-inputevent-data" rel="nofollow" target="_blank"><code>InputEvent.data</code></a> property that also returns the character of the key pressed when the <a href="https://w3c.github.io/uievents#dom-inputevent-inputtype" rel="nofollow" target="_blank"><code>InputEvent.inputType</code></a> value is <code>'insertText'</code>. For more details on this tweak, please refer to the source code of this page.</p>
       </div>
       <h3>Node.js</h3>
       <p>Functions and methods in this application are mostly native JavaScript and are intended for use by the browser. Node.js doesn&rsquo;t know about the DOM, so this kind of practice will probably be used more often to build new browser packages than to be used directly in the Node.js server.</p>
@@ -98,36 +97,9 @@ const map = new Key;</code></pre>
         console.log(command);
     }
 });</code></pre>
-      <pre><code>// Partial mobile support
-self.addEventListener('beforeinput', e => {
-    if (e.data && e.data.length > 1) {
-        console.info('Likely coming from a `paste` event, or an auto-complete feature.');
-    }
-    // Having 1 printable character to put will discard the others
-    map.toArray().forEach(k => k && 1 === k.length && map.pull(k));
-    // Put the printable character to the list
-    e.data && map.push(e.data);
-    let command = map.command();
-    if (command) {
-        console.log(command);
-    }
-});</code></pre>
       <p>Checks if current key combination is <code>Control-b</code>.</p>
       <pre><code>self.addEventListener('keydown', e => {
     e.key && map.push(e.key);
-    if (map.command('Control-b')) {
-        console.log('Bold!');
-    }
-});</code></pre>
-      <pre><code>// Partial mobile support
-self.addEventListener('beforeinput', e => {
-    if (e.data && e.data.length > 1) {
-        console.info('Likely coming from a `paste` event, or an auto-complete feature.');
-    }
-    // Having 1 printable character to put will discard the others
-    map.toArray().forEach(k => k && 1 === k.length && map.pull(k));
-    // Put the printable character to the list
-    e.data && map.push(e.data);
     if (map.command('Control-b')) {
         console.log('Bold!');
     }
@@ -157,34 +129,20 @@ if (command) {
       <h4><code>map.pull(key)</code></h4>
       <p>Removes key from the queue.</p>
       <pre><code>self.addEventListener('blur', e => map.pull());
-self.addEventListener('input', e => e.data && map.pull(e.data));
 self.addEventListener('keyup', e => e.key && map.pull(e.key));</code></pre>
       <h4><code>map.push(key)</code></h4>
       <p>Adds key to the queue.</p>
       <pre><code>self.addEventListener('keydown', e => e.key && map.push(e.key));</code></pre>
-      <pre><code>// Partial mobile support
-self.addEventListener('beforeinput', e => e.data && map.push(e.data));</code></pre>
       <h4><code>map.toArray()</code></h4>
       <p>Returns the current key combination as array.</p>
       <pre><code>self.addEventListener('keydown', e => {
     e.key && map.push(e.key);
     console.info(map.toArray());
 });</code></pre>
-      <pre><code>// Partial mobile support
-self.addEventListener('beforeinput', e => {
-    e.data && map.push(e.data);
-    console.info(map.toArray());
-});</code></pre>
       <h4><code>map.toString()</code></h4>
       <p>Returns the current key combination as string.</p>
       <pre><code>self.addEventListener('keydown', e => {
     e.key && map.push(e.key);
-    console.info(map + "");
-    console.info(map.toString());
-});</code></pre>
-      <pre><code>// Partial mobile support
-self.addEventListener('beforeinput', e => {
-    e.data && map.push(e.data);
     console.info(map + "");
     console.info(map.toString());
 });</code></pre>
@@ -256,15 +214,28 @@ map.keys['Control-k'] = ['insertLink', ['http://']]; // This will execute `map.c
               map[e.shiftKey ? 'push' : 'pull']('Shift');
               e.key && map.push(e.key);
           } else {
-              if (e.data && e.data.length > 1) {
-                  console.info('Likely coming from a `paste` event, or an auto-complete feature.');
+              if ('deleteContentBackward' === e.inputType) {
+                  map.pull().push('Backspace'); // Simulate `Backspace` key
+              } else if ('deleteContentForward' === e.inputType) {
+                  map.pull().push('Delete'); // Simulate `Delete` key
+              } else if ('deleteWordBackward' === e.inputType) {
+                  map.pull().push('Control').push('Backspace'); // Simulate `Control-Backspace` keys
+              } else if ('deleteWordForward' === e.inputType) {
+                  map.pull().push('Control').push('Delete'); // Simulate `Control-Delete` keys
+              } else if ('insertLineBreak' === e.inputType) {
+                  map.pull().push('Enter'); // Simulate `Enter` key
+              } else if ('insertText' === e.inputType && e.data) {
+                  map.pull(); // One character at a time
+                  if (-1 !== 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.indexOf(e.data)) {
+                      map.push('Shift');
+                  }
+                  map.push(e.data);
               }
-              e.data && map.push(e.data);
           }
           let command = map.command();
           let value = map.fire(command);
           test.style.color = null !== value ? '#090' : '#900';
-          test.innerHTML = '<b>' + map + '</b> (command' + (null !== value ? "" : ' does not') + ' exist)';
+          test.innerHTML = '<b><code>`' + map + '`</code></b> (command' + (null !== value ? "" : ' does not') + ' exist)';
           if (false === value) {
               e.preventDefault();
           }
@@ -274,9 +245,32 @@ map.keys['Control-k'] = ['insertLink', ['http://']]; // This will execute `map.c
       const onBlur = function (e) {
           map.pull();
       };
+      // Partial mobile support
       const onInputOrKeyUp = function (e) {
-          const key = 'keyup' === e.type ? e.key : e.data;
-          key && map.pull(key);
+          if ('keyup' === e.type) {
+              map[e.altKey ? 'push' : 'pull']('Alt');
+              map[e.ctrlKey ? 'push' : 'pull']('Control');
+              map[e.metaKey ? 'push' : 'pull']('Meta');
+              map[e.shiftKey ? 'push' : 'pull']('Shift');
+              e.key && map.pull(e.key);
+          } else {
+              if ('deleteContentBackward' === e.inputType) {
+                  map.pull('Backspace');
+              } else if ('deleteContentForward' === e.inputType) {
+                  map.pull('Delete');
+              } else if ('deleteWordBackward' === e.inputType) {
+                  map.pull('Control').pull('Backspace');
+              } else if ('deleteWordForward' === e.inputType) {
+                  map.pull('Control').pull('Delete');
+              } else if ('insertLineBreak' === e.inputType) {
+                  map.pull('Enter');
+              } else if ('insertText' === e.inputType && e.data) {
+                  if (-1 !== 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.indexOf(e.data)) {
+                      map.pull('Shift');
+                  }
+                  map.pull(e.data);
+              }
+          }
       };
       self.addEventListener('beforeinput', onBeforeInputOrKeyDown, false);
       self.addEventListener('blur', onBlur, false);

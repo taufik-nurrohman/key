@@ -43,15 +43,28 @@ block script
     |         map[e.shiftKey ? 'push' : 'pull']('Shift');
     |         e.key && map.push(e.key);
     |     } else {
-    |         if (e.data && e.data.length > 1) {
-    |             console.info('Likely coming from a `paste` event, or an auto-complete feature.');
+    |         if ('deleteContentBackward' === e.inputType) {
+    |             map.pull().push('Backspace'); // Simulate `Backspace` key
+    |         } else if ('deleteContentForward' === e.inputType) {
+    |             map.pull().push('Delete'); // Simulate `Delete` key
+    |         } else if ('deleteWordBackward' === e.inputType) {
+    |             map.pull().push('Control').push('Backspace'); // Simulate `Control-Backspace` keys
+    |         } else if ('deleteWordForward' === e.inputType) {
+    |             map.pull().push('Control').push('Delete'); // Simulate `Control-Delete` keys
+    |         } else if ('insertLineBreak' === e.inputType) {
+    |             map.pull().push('Enter'); // Simulate `Enter` key
+    |         } else if ('insertText' === e.inputType && e.data) {
+    |             map.pull(); // One character at a time
+    |             if (-1 !== 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.indexOf(e.data)) {
+    |                 map.push('Shift');
+    |             }
+    |             map.push(e.data);
     |         }
-    |         e.data && map.push(e.data);
     |     }
     |     let command = map.command();
     |     let value = map.fire(command);
     |     test.style.color = null !== value ? '#090' : '#900';
-    |     test.innerHTML = '<b>' + map + '</b> (command' + (null !== value ? "" : ' does not') + ' exist)';
+    |     test.innerHTML = '<b><code>`' + map + '`</code></b> (command' + (null !== value ? "" : ' does not') + ' exist)';
     |     if (false === value) {
     |         e.preventDefault();
     |     }
@@ -63,9 +76,32 @@ block script
     |     map.pull();
     | };
     |
+    | // Partial mobile support
     | const onInputOrKeyUp = function (e) {
-    |     const key = 'keyup' === e.type ? e.key : e.data;
-    |     key && map.pull(key);
+    |     if ('keyup' === e.type) {
+    |         map[e.altKey ? 'push' : 'pull']('Alt');
+    |         map[e.ctrlKey ? 'push' : 'pull']('Control');
+    |         map[e.metaKey ? 'push' : 'pull']('Meta');
+    |         map[e.shiftKey ? 'push' : 'pull']('Shift');
+    |         e.key && map.pull(e.key);
+    |     } else {
+    |         if ('deleteContentBackward' === e.inputType) {
+    |             map.pull('Backspace');
+    |         } else if ('deleteContentForward' === e.inputType) {
+    |             map.pull('Delete');
+    |         } else if ('deleteWordBackward' === e.inputType) {
+    |             map.pull('Control').pull('Backspace');
+    |         } else if ('deleteWordForward' === e.inputType) {
+    |             map.pull('Control').pull('Delete');
+    |         } else if ('insertLineBreak' === e.inputType) {
+    |             map.pull('Enter');
+    |         } else if ('insertText' === e.inputType && e.data) {
+    |             if (-1 !== 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.indexOf(e.data)) {
+    |                 map.pull('Shift');
+    |             }
+    |             map.pull(e.data);
+    |         }
+    |     }
     | };
     |
     | self.addEventListener('beforeinput', onBeforeInputOrKeyDown, false);
@@ -112,7 +148,6 @@ block content
       |       const map = new Key;
       |       const self = document.querySelector('textarea');
       |       self.addEventListener('blur', e =&gt; map.pull()); // Reset!
-      |       self.addEventListener('input', e =&gt; map.pull()); // Reset!
       |       let wait;
       |       self.addEventListener('keydown', e =&gt; {
       |           // Make the `Alt`, `Control`, `Meta`, and `Shift` keys sticky (does not require the user to release all keys first to repeat or change the current key combination).
@@ -131,7 +166,7 @@ block content
       |   &lt;/body&gt;
       | &lt;/html&gt;
     div(role='note')
-      p #[strong Note:] For better compatibility with mobile devices, it is also a good practice to listen to the #[code beforeinput] event to verify the character being typed. Unlike the #[code keydown] event, which has the #[a(href='https://w3c.github.io/uievents#dom-keyboardevent-key' rel='nofollow' target='_blank') #[code KeyboardEvent.key]] property that returns the character of the key pressed before it is inserted into the text area, the #[code beforeinput] (and #[code input]) event has the #[a(href='https://w3c.github.io/uievents#dom-inputevent-data' rel='nofollow' target='_blank') #[code InputEvent.data]] property that also returns the character of the key pressed.
+      p #[strong Note:] For better compatibility with mobile devices, it is also a good practice to listen to the #[code beforeinput] event to verify the character being typed. Unlike the #[code keydown] event, which has the #[a(href='https://w3c.github.io/uievents#dom-keyboardevent-key' rel='nofollow' target='_blank') #[code KeyboardEvent.key]] property that returns the character of the key pressed before it is inserted into the text area, the #[code beforeinput] (and #[code input]) event has the #[a(href='https://w3c.github.io/uievents#dom-inputevent-data' rel='nofollow' target='_blank') #[code InputEvent.data]] property that also returns the character of the key pressed when the #[a(href='https://w3c.github.io/uievents#dom-inputevent-inputtype' rel='nofollow' target='_blank') #[code InputEvent.inputType]] value is #[code 'insertText']. For more details on this tweak, please refer to the source code of this page.
     h3 Node.js
     p Functions and methods in this application are mostly native JavaScript and are intended for use by the browser. Node.js doesn&rsquo;t know about the DOM, so this kind of practice will probably be used more often to build new browser packages than to be used directly in the Node.js server.
     h4 CommonJS
@@ -178,39 +213,10 @@ block content
       |         console.log(command);
       |     }
       | });
-    pre: code
-      | // Partial mobile support
-      | self.addEventListener('beforeinput', e => {
-      |     if (e.data && e.data.length > 1) {
-      |         console.info('Likely coming from a `paste` event, or an auto-complete feature.');
-      |     }
-      |     // Having 1 printable character to put will discard the others
-      |     map.toArray().forEach(k => k && 1 === k.length && map.pull(k));
-      |     // Put the printable character to the list
-      |     e.data && map.push(e.data);
-      |     let command = map.command();
-      |     if (command) {
-      |         console.log(command);
-      |     }
-      | });
     p Checks if current key combination is #[code Control-b].
     pre: code
       | self.addEventListener('keydown', e => {
       |     e.key && map.push(e.key);
-      |     if (map.command('Control-b')) {
-      |         console.log('Bold!');
-      |     }
-      | });
-    pre: code
-      | // Partial mobile support
-      | self.addEventListener('beforeinput', e => {
-      |     if (e.data && e.data.length > 1) {
-      |         console.info('Likely coming from a `paste` event, or an auto-complete feature.');
-      |     }
-      |     // Having 1 printable character to put will discard the others
-      |     map.toArray().forEach(k => k && 1 === k.length && map.pull(k));
-      |     // Put the printable character to the list
-      |     e.data && map.push(e.data);
       |     if (map.command('Control-b')) {
       |         console.log('Bold!');
       |     }
@@ -243,15 +249,11 @@ block content
     p Removes key from the queue.
     pre: code
       | self.addEventListener('blur', e => map.pull());
-      | self.addEventListener('input', e => e.data && map.pull(e.data));
       | self.addEventListener('keyup', e => e.key && map.pull(e.key));
     h4: code map.push(key)
     p Adds key to the queue.
     pre: code
       | self.addEventListener('keydown', e => e.key && map.push(e.key));
-    pre: code
-      | // Partial mobile support
-      | self.addEventListener('beforeinput', e => e.data && map.push(e.data));
     h4: code map.toArray()
     p Returns the current key combination as array.
     pre: code
@@ -259,24 +261,11 @@ block content
       |     e.key && map.push(e.key);
       |     console.info(map.toArray());
       | });
-    pre: code
-      | // Partial mobile support
-      | self.addEventListener('beforeinput', e => {
-      |     e.data && map.push(e.data);
-      |     console.info(map.toArray());
-      | });
     h4: code map.toString()
     p Returns the current key combination as string.
     pre: code
       | self.addEventListener('keydown', e => {
       |     e.key && map.push(e.key);
-      |     console.info(map + "");
-      |     console.info(map.toString());
-      | });
-    pre: code
-      | // Partial mobile support
-      | self.addEventListener('beforeinput', e => {
-      |     e.data && map.push(e.data);
       |     console.info(map + "");
       |     console.info(map.toString());
       | });

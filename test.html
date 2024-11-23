@@ -20,7 +20,7 @@
       };
       map.keys['Control-b'] = 'bold';
       self.addEventListener('blur', e => map.pull());
-      self.addEventListener('input', e => e.data && map.pull(e.data));
+      self.addEventListener('focus', e => map.pull());
       let wait;
       self.addEventListener('keydown', e => {
           e.key && map.push(e.key);
