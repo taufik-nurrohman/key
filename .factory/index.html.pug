@@ -179,11 +179,14 @@ block content
       |     }
       | });
     pre: code
-      | // Mobile
+      | // Partial mobile support
       | self.addEventListener('beforeinput', e => {
       |     if (e.data && e.data.length > 1) {
       |         console.info('Likely coming from a `paste` event, or an auto-complete feature.');
       |     }
+      |     // Having 1 printable character to put will discard the others
+      |     map.toArray().forEach(k => k && 1 === k.length && map.pull(k));
+      |     // Put the printable character to the list
       |     e.data && map.push(e.data);
       |     let command = map.command();
       |     if (command) {
@@ -199,11 +202,14 @@ block content
       |     }
       | });
     pre: code
-      | // Mobile
+      | // Partial mobile support
       | self.addEventListener('beforeinput', e => {
       |     if (e.data && e.data.length > 1) {
       |         console.info('Likely coming from a `paste` event, or an auto-complete feature.');
       |     }
+      |     // Having 1 printable character to put will discard the others
+      |     map.toArray().forEach(k => k && 1 === k.length && map.pull(k));
+      |     // Put the printable character to the list
       |     e.data && map.push(e.data);
       |     if (map.command('Control-b')) {
       |         console.log('Bold!');
@@ -244,7 +250,7 @@ block content
     pre: code
       | self.addEventListener('keydown', e => e.key && map.push(e.key));
     pre: code
-      | // Mobile
+      | // Partial mobile support
       | self.addEventListener('beforeinput', e => e.data && map.push(e.data));
     h4: code map.toArray()
     p Returns the current key combination as array.
@@ -254,7 +260,7 @@ block content
       |     console.info(map.toArray());
       | });
     pre: code
-      | // Mobile
+      | // Partial mobile support
       | self.addEventListener('beforeinput', e => {
       |     e.data && map.push(e.data);
       |     console.info(map.toArray());
@@ -268,7 +274,7 @@ block content
       |     console.info(map.toString());
       | });
     pre: code
-      | // Mobile
+      | // Partial mobile support
       | self.addEventListener('beforeinput', e => {
       |     e.data && map.push(e.data);
       |     console.info(map + "");

@@ -5,7 +5,7 @@
     <meta content="#000" name="theme-color">
     <meta content="width=device-width" name="viewport">
     <meta content="Micro JavaScript hot-key/key-map system." name="description">
-    <title>Key 3.1.1</title>
+    <title>Key 3.1.2</title>
     <link href="../layout/index.min.css" rel="stylesheet">
     <style>
       body {
@@ -19,7 +19,7 @@
     <p role="alert">Do you like this project? Please support my <a href="https://github.com/mecha-cms">Mecha CMS</a> project too. Thank you!</p>
     <header>
       <hgroup>
-        <h1>Key 3.1.1</h1>
+        <h1>Key 3.1.2</h1>
         <p>Micro JavaScript <em>hot-key</em>/<em>key-map</em> system.</p>
       </hgroup>
     </header>
@@ -98,11 +98,14 @@ const map = new Key;</code></pre>
         console.log(command);
     }
 });</code></pre>
-      <pre><code>// Mobile
+      <pre><code>// Partial mobile support
 self.addEventListener('beforeinput', e => {
     if (e.data && e.data.length > 1) {
         console.info('Likely coming from a `paste` event, or an auto-complete feature.');
     }
+    // Having 1 printable character to put will discard the others
+    map.toArray().forEach(k => k && 1 === k.length && map.pull(k));
+    // Put the printable character to the list
     e.data && map.push(e.data);
     let command = map.command();
     if (command) {
@@ -116,11 +119,14 @@ self.addEventListener('beforeinput', e => {
         console.log('Bold!');
     }
 });</code></pre>
-      <pre><code>// Mobile
+      <pre><code>// Partial mobile support
 self.addEventListener('beforeinput', e => {
     if (e.data && e.data.length > 1) {
         console.info('Likely coming from a `paste` event, or an auto-complete feature.');
     }
+    // Having 1 printable character to put will discard the others
+    map.toArray().forEach(k => k && 1 === k.length && map.pull(k));
+    // Put the printable character to the list
     e.data && map.push(e.data);
     if (map.command('Control-b')) {
         console.log('Bold!');
@@ -156,7 +162,7 @@ self.addEventListener('keyup', e => e.key && map.pull(e.key));</code></pre>
       <h4><code>map.push(key)</code></h4>
       <p>Adds key to the queue.</p>
       <pre><code>self.addEventListener('keydown', e => e.key && map.push(e.key));</code></pre>
-      <pre><code>// Mobile
+      <pre><code>// Partial mobile support
 self.addEventListener('beforeinput', e => e.data && map.push(e.data));</code></pre>
       <h4><code>map.toArray()</code></h4>
       <p>Returns the current key combination as array.</p>
@@ -164,7 +170,7 @@ self.addEventListener('beforeinput', e => e.data && map.push(e.data));</code></p
     e.key && map.push(e.key);
     console.info(map.toArray());
 });</code></pre>
-      <pre><code>// Mobile
+      <pre><code>// Partial mobile support
 self.addEventListener('beforeinput', e => {
     e.data && map.push(e.data);
     console.info(map.toArray());
@@ -176,7 +182,7 @@ self.addEventListener('beforeinput', e => {
     console.info(map + "");
     console.info(map.toString());
 });</code></pre>
-      <pre><code>// Mobile
+      <pre><code>// Partial mobile support
 self.addEventListener('beforeinput', e => {
     e.data && map.push(e.data);
     console.info(map + "");
