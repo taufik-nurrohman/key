@@ -312,17 +312,17 @@ block content
         |
         | self.addEventListener('keydown', function (e) {
         |     // This sequence ensures that the combination of keys will form `C-A-S-`, or `C-A-`, or `C-S-`, or `A-S-` no matter which key is pressed first.
-        |     map.pull('Control')[e.ctrlKey ? 'push' : 'pull']('C'); // Normalize `Control` key to `C`
-        |     map.pull('Alt')[e.altKey ? 'push' : 'pull']('A'); // Normalize `Alt` key to `A`
-        |     map.pull('Shift')[e.shiftKey ? 'push' : 'pull']('S'); // Normalize `Shift` key to `S`
+        |     map[e.ctrlKey ? 'push' : 'pull']('C').pull('Control'); // Normalize `Control` key to `C`
+        |     map[e.altKey ? 'push' : 'pull']('A').pull('Alt'); // Normalize `Alt` key to `A`
+        |     map[e.shiftKey ? 'push' : 'pull']('S').pull('Shift'); // Normalize `Shift` key to `S`
         |     // Add only the lower case version of the key, so that the `CapsLock` and `Shift` key states will not affect the results of the key combination.
-        |     e.key && map.push(e.key.toLowerCase());
+        |     e.key && !['Alt', 'Control', 'Shift'].includes(e.key) && map.push(e.key.toLowerCase());
         | });
         |
         | self.addEventListener('keyup', function (e) {
-        |     map.pull('Control')[e.ctrlKey ? 'push' : 'pull']('C');
-        |     map.pull('Alt')[e.altKey ? 'push' : 'pull']('A');
-        |     map.pull('Shift')[e.shiftKey ? 'push' : 'pull']('S');
+        |     map[e.ctrlKey ? 'push' : 'pull']('C').pull('Control');
+        |     map[e.altKey ? 'push' : 'pull']('A').pull('Alt');
+        |     map[e.shiftKey ? 'push' : 'pull']('S').pull('Shift');
         |     e.key && map.pull(e.key.toLowerCase());
         | });
     h2#license
