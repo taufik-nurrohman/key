@@ -74,7 +74,7 @@ block script
     | map.keys['w'] = 'windowNext';
     |
     | window.addEventListener('blur', e => map.pull());
-    | window.addEventListener('input', e => map.pull());
+    | window.addEventListener('focus', e => map.pull());
     |
     | let wait;
     | window.addEventListener('keydown', e => {
